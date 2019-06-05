@@ -1,0 +1,8 @@
+{
+    "propel": {
+        "paths": {
+            "schemaDir": "C:\\xampp\\htdocs\\Loan",
+            "phpDir": "C:\\xampp\\htdocs\\Loan"
+        }
+    }
+}

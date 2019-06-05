@@ -1,0 +1,1586 @@
+<?php
+
+namespace models\models\Base;
+
+use \Exception;
+use \PDO;
+use Propel\Runtime\Propel;
+use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\ActiveQuery\ModelCriteria;
+use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
+use Propel\Runtime\Collection\Collection;
+use Propel\Runtime\Collection\ObjectCollection;
+use Propel\Runtime\Connection\ConnectionInterface;
+use Propel\Runtime\Exception\BadMethodCallException;
+use Propel\Runtime\Exception\LogicException;
+use Propel\Runtime\Exception\PropelException;
+use Propel\Runtime\Map\TableMap;
+use Propel\Runtime\Parser\AbstractParser;
+use models\models\Marca as ChildMarca;
+use models\models\MarcaQuery as ChildMarcaQuery;
+use models\models\Producto as ChildProducto;
+use models\models\ProductoQuery as ChildProductoQuery;
+use models\models\Map\MarcaTableMap;
+use models\models\Map\ProductoTableMap;
+
+/**
+ * Base class that represents a row from the 'marca' table.
+ *
+ *
+ *
+ * @package    propel.generator.models.models.Base
+ */
+abstract class Marca implements ActiveRecordInterface
+{
+    /**
+     * TableMap class name
+     */
+    const TABLE_MAP = '\\models\\models\\Map\\MarcaTableMap';
+
+
+    /**
+     * attribute to determine if this object has previously been saved.
+     * @var boolean
+     */
+    protected $new = true;
+
+    /**
+     * attribute to determine whether this object has been deleted.
+     * @var boolean
+     */
+    protected $deleted = false;
+
+    /**
+     * The columns that have been modified in current object.
+     * Tracking modified columns allows us to only update modified columns.
+     * @var array
+     */
+    protected $modifiedColumns = array();
+
+    /**
+     * The (virtual) columns that are added at runtime
+     * The formatters can add supplementary columns based on a resultset
+     * @var array
+     */
+    protected $virtualColumns = array();
+
+    /**
+     * The value for the idmarca field.
+     *
+     * @var        int
+     */
+    protected $idmarca;
+
+    /**
+     * The value for the nombre field.
+     *
+     * @var        string
+     */
+    protected $nombre;
+
+    /**
+     * The value for the activo field.
+     *
+     * @var        int
+     */
+    protected $activo;
+
+    /**
+     * @var        ObjectCollection|ChildProducto[] Collection to store aggregation of ChildProducto objects.
+     */
+    protected $collProductos;
+    protected $collProductosPartial;
+
+    /**
+     * Flag to prevent endless save loop, if this object is referenced
+     * by another object which falls in this transaction.
+     *
+     * @var boolean
+     */
+    protected $alreadyInSave = false;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var ObjectCollection|ChildProducto[]
+     */
+    protected $productosScheduledForDeletion = null;
+
+    /**
+     * Initializes internal state of models\models\Base\Marca object.
+     */
+    public function __construct()
+    {
+    }
+
+    /**
+     * Returns whether the object has been modified.
+     *
+     * @return boolean True if the object has been modified.
+     */
+    public function isModified()
+    {
+        return !!$this->modifiedColumns;
+    }
+
+    /**
+     * Has specified column been modified?
+     *
+     * @param  string  $col column fully qualified name (TableMap::TYPE_COLNAME), e.g. Book::AUTHOR_ID
+     * @return boolean True if $col has been modified.
+     */
+    public function isColumnModified($col)
+    {
+        return $this->modifiedColumns && isset($this->modifiedColumns[$col]);
+    }
+
+    /**
+     * Get the columns that have been modified in this object.
+     * @return array A unique list of the modified column names for this object.
+     */
+    public function getModifiedColumns()
+    {
+        return $this->modifiedColumns ? array_keys($this->modifiedColumns) : [];
+    }
+
+    /**
+     * Returns whether the object has ever been saved.  This will
+     * be false, if the object was retrieved from storage or was created
+     * and then saved.
+     *
+     * @return boolean true, if the object has never been persisted.
+     */
+    public function isNew()
+    {
+        return $this->new;
+    }
+
+    /**
+     * Setter for the isNew attribute.  This method will be called
+     * by Propel-generated children and objects.
+     *
+     * @param boolean $b the state of the object.
+     */
+    public function setNew($b)
+    {
+        $this->new = (boolean) $b;
+    }
+
+    /**
+     * Whether this object has been deleted.
+     * @return boolean The deleted state of this object.
+     */
+    public function isDeleted()
+    {
+        return $this->deleted;
+    }
+
+    /**
+     * Specify whether this object has been deleted.
+     * @param  boolean $b The deleted state of this object.
+     * @return void
+     */
+    public function setDeleted($b)
+    {
+        $this->deleted = (boolean) $b;
+    }
+
+    /**
+     * Sets the modified state for the object to be false.
+     * @param  string $col If supplied, only the specified column is reset.
+     * @return void
+     */
+    public function resetModified($col = null)
+    {
+        if (null !== $col) {
+            if (isset($this->modifiedColumns[$col])) {
+                unset($this->modifiedColumns[$col]);
+            }
+        } else {
+            $this->modifiedColumns = array();
+        }
+    }
+
+    /**
+     * Compares this with another <code>Marca</code> instance.  If
+     * <code>obj</code> is an instance of <code>Marca</code>, delegates to
+     * <code>equals(Marca)</code>.  Otherwise, returns <code>false</code>.
+     *
+     * @param  mixed   $obj The object to compare to.
+     * @return boolean Whether equal to the object specified.
+     */
+    public function equals($obj)
+    {
+        if (!$obj instanceof static) {
+            return false;
+        }
+
+        if ($this === $obj) {
+            return true;
+        }
+
+        if (null === $this->getPrimaryKey() || null === $obj->getPrimaryKey()) {
+            return false;
+        }
+
+        return $this->getPrimaryKey() === $obj->getPrimaryKey();
+    }
+
+    /**
+     * Get the associative array of the virtual columns in this object
+     *
+     * @return array
+     */
+    public function getVirtualColumns()
+    {
+        return $this->virtualColumns;
+    }
+
+    /**
+     * Checks the existence of a virtual column in this object
+     *
+     * @param  string  $name The virtual column name
+     * @return boolean
+     */
+    public function hasVirtualColumn($name)
+    {
+        return array_key_exists($name, $this->virtualColumns);
+    }
+
+    /**
+     * Get the value of a virtual column in this object
+     *
+     * @param  string $name The virtual column name
+     * @return mixed
+     *
+     * @throws PropelException
+     */
+    public function getVirtualColumn($name)
+    {
+        if (!$this->hasVirtualColumn($name)) {
+            throw new PropelException(sprintf('Cannot get value of inexistent virtual column %s.', $name));
+        }
+
+        return $this->virtualColumns[$name];
+    }
+
+    /**
+     * Set the value of a virtual column in this object
+     *
+     * @param string $name  The virtual column name
+     * @param mixed  $value The value to give to the virtual column
+     *
+     * @return $this|Marca The current object, for fluid interface
+     */
+    public function setVirtualColumn($name, $value)
+    {
+        $this->virtualColumns[$name] = $value;
+
+        return $this;
+    }
+
+    /**
+     * Logs a message using Propel::log().
+     *
+     * @param  string  $msg
+     * @param  int     $priority One of the Propel::LOG_* logging levels
+     * @return boolean
+     */
+    protected function log($msg, $priority = Propel::LOG_INFO)
+    {
+        return Propel::log(get_class($this) . ': ' . $msg, $priority);
+    }
+
+    /**
+     * Export the current object properties to a string, using a given parser format
+     * <code>
+     * $book = BookQuery::create()->findPk(9012);
+     * echo $book->exportTo('JSON');
+     *  => {"Id":9012,"Title":"Don Juan","ISBN":"0140422161","Price":12.99,"PublisherId":1234,"AuthorId":5678}');
+     * </code>
+     *
+     * @param  mixed   $parser                 A AbstractParser instance, or a format name ('XML', 'YAML', 'JSON', 'CSV')
+     * @param  boolean $includeLazyLoadColumns (optional) Whether to include lazy load(ed) columns. Defaults to TRUE.
+     * @return string  The exported data
+     */
+    public function exportTo($parser, $includeLazyLoadColumns = true)
+    {
+        if (!$parser instanceof AbstractParser) {
+            $parser = AbstractParser::getParser($parser);
+        }
+
+        return $parser->fromArray($this->toArray(TableMap::TYPE_PHPNAME, $includeLazyLoadColumns, array(), true));
+    }
+
+    /**
+     * Clean up internal collections prior to serializing
+     * Avoids recursive loops that turn into segmentation faults when serializing
+     */
+    public function __sleep()
+    {
+        $this->clearAllReferences();
+
+        $cls = new \ReflectionClass($this);
+        $propertyNames = [];
+        $serializableProperties = array_diff($cls->getProperties(), $cls->getProperties(\ReflectionProperty::IS_STATIC));
+
+        foreach($serializableProperties as $property) {
+            $propertyNames[] = $property->getName();
+        }
+
+        return $propertyNames;
+    }
+
+    /**
+     * Get the [idmarca] column value.
+     *
+     * @return int
+     */
+    public function getIdmarca()
+    {
+        return $this->idmarca;
+    }
+
+    /**
+     * Get the [nombre] column value.
+     *
+     * @return string
+     */
+    public function getNombre()
+    {
+        return $this->nombre;
+    }
+
+    /**
+     * Get the [activo] column value.
+     *
+     * @return int
+     */
+    public function getActivo()
+    {
+        return $this->activo;
+    }
+
+    /**
+     * Set the value of [idmarca] column.
+     *
+     * @param int $v new value
+     * @return $this|\models\models\Marca The current object (for fluent API support)
+     */
+    public function setIdmarca($v)
+    {
+        if ($v !== null) {
+            $v = (int) $v;
+        }
+
+        if ($this->idmarca !== $v) {
+            $this->idmarca = $v;
+            $this->modifiedColumns[MarcaTableMap::COL_IDMARCA] = true;
+        }
+
+        return $this;
+    } // setIdmarca()
+
+    /**
+     * Set the value of [nombre] column.
+     *
+     * @param string $v new value
+     * @return $this|\models\models\Marca The current object (for fluent API support)
+     */
+    public function setNombre($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->nombre !== $v) {
+            $this->nombre = $v;
+            $this->modifiedColumns[MarcaTableMap::COL_NOMBRE] = true;
+        }
+
+        return $this;
+    } // setNombre()
+
+    /**
+     * Set the value of [activo] column.
+     *
+     * @param int $v new value
+     * @return $this|\models\models\Marca The current object (for fluent API support)
+     */
+    public function setActivo($v)
+    {
+        if ($v !== null) {
+            $v = (int) $v;
+        }
+
+        if ($this->activo !== $v) {
+            $this->activo = $v;
+            $this->modifiedColumns[MarcaTableMap::COL_ACTIVO] = true;
+        }
+
+        return $this;
+    } // setActivo()
+
+    /**
+     * Indicates whether the columns in this object are only set to default values.
+     *
+     * This method can be used in conjunction with isModified() to indicate whether an object is both
+     * modified _and_ has some values set which are non-default.
+     *
+     * @return boolean Whether the columns in this object are only been set with default values.
+     */
+    public function hasOnlyDefaultValues()
+    {
+        // otherwise, everything was equal, so return TRUE
+        return true;
+    } // hasOnlyDefaultValues()
+
+    /**
+     * Hydrates (populates) the object variables with values from the database resultset.
+     *
+     * An offset (0-based "start column") is specified so that objects can be hydrated
+     * with a subset of the columns in the resultset rows.  This is needed, for example,
+     * for results of JOIN queries where the resultset row includes columns from two or
+     * more tables.
+     *
+     * @param array   $row       The row returned by DataFetcher->fetch().
+     * @param int     $startcol  0-based offset column which indicates which restultset column to start with.
+     * @param boolean $rehydrate Whether this object is being re-hydrated from the database.
+     * @param string  $indexType The index type of $row. Mostly DataFetcher->getIndexType().
+                                  One of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME
+     *                            TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
+     *
+     * @return int             next starting column
+     * @throws PropelException - Any caught Exception will be rewrapped as a PropelException.
+     */
+    public function hydrate($row, $startcol = 0, $rehydrate = false, $indexType = TableMap::TYPE_NUM)
+    {
+        try {
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : MarcaTableMap::translateFieldName('Idmarca', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->idmarca = (null !== $col) ? (int) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : MarcaTableMap::translateFieldName('Nombre', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->nombre = (null !== $col) ? (string) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : MarcaTableMap::translateFieldName('Activo', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->activo = (null !== $col) ? (int) $col : null;
+            $this->resetModified();
+
+            $this->setNew(false);
+
+            if ($rehydrate) {
+                $this->ensureConsistency();
+            }
+
+            return $startcol + 3; // 3 = MarcaTableMap::NUM_HYDRATE_COLUMNS.
+
+        } catch (Exception $e) {
+            throw new PropelException(sprintf('Error populating %s object', '\\models\\models\\Marca'), 0, $e);
+        }
+    }
+
+    /**
+     * Checks and repairs the internal consistency of the object.
+     *
+     * This method is executed after an already-instantiated object is re-hydrated
+     * from the database.  It exists to check any foreign keys to make sure that
+     * the objects related to the current object are correct based on foreign key.
+     *
+     * You can override this method in the stub class, but you should always invoke
+     * the base method from the overridden method (i.e. parent::ensureConsistency()),
+     * in case your model changes.
+     *
+     * @throws PropelException
+     */
+    public function ensureConsistency()
+    {
+    } // ensureConsistency
+
+    /**
+     * Reloads this object from datastore based on primary key and (optionally) resets all associated objects.
+     *
+     * This will only work if the object has been saved and has a valid primary key set.
+     *
+     * @param      boolean $deep (optional) Whether to also de-associated any related objects.
+     * @param      ConnectionInterface $con (optional) The ConnectionInterface connection to use.
+     * @return void
+     * @throws PropelException - if this object is deleted, unsaved or doesn't have pk match in db
+     */
+    public function reload($deep = false, ConnectionInterface $con = null)
+    {
+        if ($this->isDeleted()) {
+            throw new PropelException("Cannot reload a deleted object.");
+        }
+
+        if ($this->isNew()) {
+            throw new PropelException("Cannot reload an unsaved object.");
+        }
+
+        if ($con === null) {
+            $con = Propel::getServiceContainer()->getReadConnection(MarcaTableMap::DATABASE_NAME);
+        }
+
+        // We don't need to alter the object instance pool; we're just modifying this instance
+        // already in the pool.
+
+        $dataFetcher = ChildMarcaQuery::create(null, $this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
+        $row = $dataFetcher->fetch();
+        $dataFetcher->close();
+        if (!$row) {
+            throw new PropelException('Cannot find matching row in the database to reload object values.');
+        }
+        $this->hydrate($row, 0, true, $dataFetcher->getIndexType()); // rehydrate
+
+        if ($deep) {  // also de-associate any related objects?
+
+            $this->collProductos = null;
+
+        } // if (deep)
+    }
+
+    /**
+     * Removes this object from datastore and sets delete attribute.
+     *
+     * @param      ConnectionInterface $con
+     * @return void
+     * @throws PropelException
+     * @see Marca::setDeleted()
+     * @see Marca::isDeleted()
+     */
+    public function delete(ConnectionInterface $con = null)
+    {
+        if ($this->isDeleted()) {
+            throw new PropelException("This object has already been deleted.");
+        }
+
+        if ($con === null) {
+            $con = Propel::getServiceContainer()->getWriteConnection(MarcaTableMap::DATABASE_NAME);
+        }
+
+        $con->transaction(function () use ($con) {
+            $deleteQuery = ChildMarcaQuery::create()
+                ->filterByPrimaryKey($this->getPrimaryKey());
+            $ret = $this->preDelete($con);
+            if ($ret) {
+                $deleteQuery->delete($con);
+                $this->postDelete($con);
+                $this->setDeleted(true);
+            }
+        });
+    }
+
+    /**
+     * Persists this object to the database.
+     *
+     * If the object is new, it inserts it; otherwise an update is performed.
+     * All modified related objects will also be persisted in the doSave()
+     * method.  This method wraps all precipitate database operations in a
+     * single transaction.
+     *
+     * @param      ConnectionInterface $con
+     * @return int             The number of rows affected by this insert/update and any referring fk objects' save() operations.
+     * @throws PropelException
+     * @see doSave()
+     */
+    public function save(ConnectionInterface $con = null)
+    {
+        if ($this->isDeleted()) {
+            throw new PropelException("You cannot save an object that has been deleted.");
+        }
+
+        if ($this->alreadyInSave) {
+            return 0;
+        }
+
+        if ($con === null) {
+            $con = Propel::getServiceContainer()->getWriteConnection(MarcaTableMap::DATABASE_NAME);
+        }
+
+        return $con->transaction(function () use ($con) {
+            $ret = $this->preSave($con);
+            $isInsert = $this->isNew();
+            if ($isInsert) {
+                $ret = $ret && $this->preInsert($con);
+            } else {
+                $ret = $ret && $this->preUpdate($con);
+            }
+            if ($ret) {
+                $affectedRows = $this->doSave($con);
+                if ($isInsert) {
+                    $this->postInsert($con);
+                } else {
+                    $this->postUpdate($con);
+                }
+                $this->postSave($con);
+                MarcaTableMap::addInstanceToPool($this);
+            } else {
+                $affectedRows = 0;
+            }
+
+            return $affectedRows;
+        });
+    }
+
+    /**
+     * Performs the work of inserting or updating the row in the database.
+     *
+     * If the object is new, it inserts it; otherwise an update is performed.
+     * All related objects are also updated in this method.
+     *
+     * @param      ConnectionInterface $con
+     * @return int             The number of rows affected by this insert/update and any referring fk objects' save() operations.
+     * @throws PropelException
+     * @see save()
+     */
+    protected function doSave(ConnectionInterface $con)
+    {
+        $affectedRows = 0; // initialize var to track total num of affected rows
+        if (!$this->alreadyInSave) {
+            $this->alreadyInSave = true;
+
+            if ($this->isNew() || $this->isModified()) {
+                // persist changes
+                if ($this->isNew()) {
+                    $this->doInsert($con);
+                    $affectedRows += 1;
+                } else {
+                    $affectedRows += $this->doUpdate($con);
+                }
+                $this->resetModified();
+            }
+
+            if ($this->productosScheduledForDeletion !== null) {
+                if (!$this->productosScheduledForDeletion->isEmpty()) {
+                    \models\models\ProductoQuery::create()
+                        ->filterByPrimaryKeys($this->productosScheduledForDeletion->getPrimaryKeys(false))
+                        ->delete($con);
+                    $this->productosScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collProductos !== null) {
+                foreach ($this->collProductos as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
+            }
+
+            $this->alreadyInSave = false;
+
+        }
+
+        return $affectedRows;
+    } // doSave()
+
+    /**
+     * Insert the row in the database.
+     *
+     * @param      ConnectionInterface $con
+     *
+     * @throws PropelException
+     * @see doSave()
+     */
+    protected function doInsert(ConnectionInterface $con)
+    {
+        $modifiedColumns = array();
+        $index = 0;
+
+        $this->modifiedColumns[MarcaTableMap::COL_IDMARCA] = true;
+        if (null !== $this->idmarca) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key (' . MarcaTableMap::COL_IDMARCA . ')');
+        }
+
+         // check the columns in natural order for more readable SQL queries
+        if ($this->isColumnModified(MarcaTableMap::COL_IDMARCA)) {
+            $modifiedColumns[':p' . $index++]  = 'idMarca';
+        }
+        if ($this->isColumnModified(MarcaTableMap::COL_NOMBRE)) {
+            $modifiedColumns[':p' . $index++]  = 'nombre';
+        }
+        if ($this->isColumnModified(MarcaTableMap::COL_ACTIVO)) {
+            $modifiedColumns[':p' . $index++]  = 'activo';
+        }
+
+        $sql = sprintf(
+            'INSERT INTO marca (%s) VALUES (%s)',
+            implode(', ', $modifiedColumns),
+            implode(', ', array_keys($modifiedColumns))
+        );
+
+        try {
+            $stmt = $con->prepare($sql);
+            foreach ($modifiedColumns as $identifier => $columnName) {
+                switch ($columnName) {
+                    case 'idMarca':
+                        $stmt->bindValue($identifier, $this->idmarca, PDO::PARAM_INT);
+                        break;
+                    case 'nombre':
+                        $stmt->bindValue($identifier, $this->nombre, PDO::PARAM_STR);
+                        break;
+                    case 'activo':
+                        $stmt->bindValue($identifier, $this->activo, PDO::PARAM_INT);
+                        break;
+                }
+            }
+            $stmt->execute();
+        } catch (Exception $e) {
+            Propel::log($e->getMessage(), Propel::LOG_ERR);
+            throw new PropelException(sprintf('Unable to execute INSERT statement [%s]', $sql), 0, $e);
+        }
+
+        try {
+            $pk = $con->lastInsertId();
+        } catch (Exception $e) {
+            throw new PropelException('Unable to get autoincrement id.', 0, $e);
+        }
+        $this->setIdmarca($pk);
+
+        $this->setNew(false);
+    }
+
+    /**
+     * Update the row in the database.
+     *
+     * @param      ConnectionInterface $con
+     *
+     * @return Integer Number of updated rows
+     * @see doSave()
+     */
+    protected function doUpdate(ConnectionInterface $con)
+    {
+        $selectCriteria = $this->buildPkeyCriteria();
+        $valuesCriteria = $this->buildCriteria();
+
+        return $selectCriteria->doUpdate($valuesCriteria, $con);
+    }
+
+    /**
+     * Retrieves a field from the object by name passed in as a string.
+     *
+     * @param      string $name name
+     * @param      string $type The type of fieldname the $name is of:
+     *                     one of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME
+     *                     TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
+     *                     Defaults to TableMap::TYPE_PHPNAME.
+     * @return mixed Value of field.
+     */
+    public function getByName($name, $type = TableMap::TYPE_PHPNAME)
+    {
+        $pos = MarcaTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
+        $field = $this->getByPosition($pos);
+
+        return $field;
+    }
+
+    /**
+     * Retrieves a field from the object by Position as specified in the xml schema.
+     * Zero-based.
+     *
+     * @param      int $pos position in xml schema
+     * @return mixed Value of field at $pos
+     */
+    public function getByPosition($pos)
+    {
+        switch ($pos) {
+            case 0:
+                return $this->getIdmarca();
+                break;
+            case 1:
+                return $this->getNombre();
+                break;
+            case 2:
+                return $this->getActivo();
+                break;
+            default:
+                return null;
+                break;
+        } // switch()
+    }
+
+    /**
+     * Exports the object as an array.
+     *
+     * You can specify the key type of the array by passing one of the class
+     * type constants.
+     *
+     * @param     string  $keyType (optional) One of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME,
+     *                    TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
+     *                    Defaults to TableMap::TYPE_PHPNAME.
+     * @param     boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
+     * @param     array $alreadyDumpedObjects List of objects to skip to avoid recursion
+     * @param     boolean $includeForeignObjects (optional) Whether to include hydrated related objects. Default to FALSE.
+     *
+     * @return array an associative array containing the field names (as keys) and field values
+     */
+    public function toArray($keyType = TableMap::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
+    {
+
+        if (isset($alreadyDumpedObjects['Marca'][$this->hashCode()])) {
+            return '*RECURSION*';
+        }
+        $alreadyDumpedObjects['Marca'][$this->hashCode()] = true;
+        $keys = MarcaTableMap::getFieldNames($keyType);
+        $result = array(
+            $keys[0] => $this->getIdmarca(),
+            $keys[1] => $this->getNombre(),
+            $keys[2] => $this->getActivo(),
+        );
+        $virtualColumns = $this->virtualColumns;
+        foreach ($virtualColumns as $key => $virtualColumn) {
+            $result[$key] = $virtualColumn;
+        }
+
+        if ($includeForeignObjects) {
+            if (null !== $this->collProductos) {
+
+                switch ($keyType) {
+                    case TableMap::TYPE_CAMELNAME:
+                        $key = 'productos';
+                        break;
+                    case TableMap::TYPE_FIELDNAME:
+                        $key = 'productos';
+                        break;
+                    default:
+                        $key = 'Productos';
+                }
+
+                $result[$key] = $this->collProductos->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Sets a field from the object by name passed in as a string.
+     *
+     * @param  string $name
+     * @param  mixed  $value field value
+     * @param  string $type The type of fieldname the $name is of:
+     *                one of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME
+     *                TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
+     *                Defaults to TableMap::TYPE_PHPNAME.
+     * @return $this|\models\models\Marca
+     */
+    public function setByName($name, $value, $type = TableMap::TYPE_PHPNAME)
+    {
+        $pos = MarcaTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
+
+        return $this->setByPosition($pos, $value);
+    }
+
+    /**
+     * Sets a field from the object by Position as specified in the xml schema.
+     * Zero-based.
+     *
+     * @param  int $pos position in xml schema
+     * @param  mixed $value field value
+     * @return $this|\models\models\Marca
+     */
+    public function setByPosition($pos, $value)
+    {
+        switch ($pos) {
+            case 0:
+                $this->setIdmarca($value);
+                break;
+            case 1:
+                $this->setNombre($value);
+                break;
+            case 2:
+                $this->setActivo($value);
+                break;
+        } // switch()
+
+        return $this;
+    }
+
+    /**
+     * Populates the object using an array.
+     *
+     * This is particularly useful when populating an object from one of the
+     * request arrays (e.g. $_POST).  This method goes through the column
+     * names, checking to see whether a matching key exists in populated
+     * array. If so the setByName() method is called for that column.
+     *
+     * You can specify the key type of the array by additionally passing one
+     * of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME,
+     * TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
+     * The default key type is the column's TableMap::TYPE_PHPNAME.
+     *
+     * @param      array  $arr     An array to populate the object from.
+     * @param      string $keyType The type of keys the array uses.
+     * @return void
+     */
+    public function fromArray($arr, $keyType = TableMap::TYPE_PHPNAME)
+    {
+        $keys = MarcaTableMap::getFieldNames($keyType);
+
+        if (array_key_exists($keys[0], $arr)) {
+            $this->setIdmarca($arr[$keys[0]]);
+        }
+        if (array_key_exists($keys[1], $arr)) {
+            $this->setNombre($arr[$keys[1]]);
+        }
+        if (array_key_exists($keys[2], $arr)) {
+            $this->setActivo($arr[$keys[2]]);
+        }
+    }
+
+     /**
+     * Populate the current object from a string, using a given parser format
+     * <code>
+     * $book = new Book();
+     * $book->importFrom('JSON', '{"Id":9012,"Title":"Don Juan","ISBN":"0140422161","Price":12.99,"PublisherId":1234,"AuthorId":5678}');
+     * </code>
+     *
+     * You can specify the key type of the array by additionally passing one
+     * of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME,
+     * TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
+     * The default key type is the column's TableMap::TYPE_PHPNAME.
+     *
+     * @param mixed $parser A AbstractParser instance,
+     *                       or a format name ('XML', 'YAML', 'JSON', 'CSV')
+     * @param string $data The source data to import from
+     * @param string $keyType The type of keys the array uses.
+     *
+     * @return $this|\models\models\Marca The current object, for fluid interface
+     */
+    public function importFrom($parser, $data, $keyType = TableMap::TYPE_PHPNAME)
+    {
+        if (!$parser instanceof AbstractParser) {
+            $parser = AbstractParser::getParser($parser);
+        }
+
+        $this->fromArray($parser->toArray($data), $keyType);
+
+        return $this;
+    }
+
+    /**
+     * Build a Criteria object containing the values of all modified columns in this object.
+     *
+     * @return Criteria The Criteria object containing all modified values.
+     */
+    public function buildCriteria()
+    {
+        $criteria = new Criteria(MarcaTableMap::DATABASE_NAME);
+
+        if ($this->isColumnModified(MarcaTableMap::COL_IDMARCA)) {
+            $criteria->add(MarcaTableMap::COL_IDMARCA, $this->idmarca);
+        }
+        if ($this->isColumnModified(MarcaTableMap::COL_NOMBRE)) {
+            $criteria->add(MarcaTableMap::COL_NOMBRE, $this->nombre);
+        }
+        if ($this->isColumnModified(MarcaTableMap::COL_ACTIVO)) {
+            $criteria->add(MarcaTableMap::COL_ACTIVO, $this->activo);
+        }
+
+        return $criteria;
+    }
+
+    /**
+     * Builds a Criteria object containing the primary key for this object.
+     *
+     * Unlike buildCriteria() this method includes the primary key values regardless
+     * of whether or not they have been modified.
+     *
+     * @throws LogicException if no primary key is defined
+     *
+     * @return Criteria The Criteria object containing value(s) for primary key(s).
+     */
+    public function buildPkeyCriteria()
+    {
+        $criteria = ChildMarcaQuery::create();
+        $criteria->add(MarcaTableMap::COL_IDMARCA, $this->idmarca);
+
+        return $criteria;
+    }
+
+    /**
+     * If the primary key is not null, return the hashcode of the
+     * primary key. Otherwise, return the hash code of the object.
+     *
+     * @return int Hashcode
+     */
+    public function hashCode()
+    {
+        $validPk = null !== $this->getIdmarca();
+
+        $validPrimaryKeyFKs = 0;
+        $primaryKeyFKs = [];
+
+        if ($validPk) {
+            return crc32(json_encode($this->getPrimaryKey(), JSON_UNESCAPED_UNICODE));
+        } elseif ($validPrimaryKeyFKs) {
+            return crc32(json_encode($primaryKeyFKs, JSON_UNESCAPED_UNICODE));
+        }
+
+        return spl_object_hash($this);
+    }
+
+    /**
+     * Returns the primary key for this object (row).
+     * @return int
+     */
+    public function getPrimaryKey()
+    {
+        return $this->getIdmarca();
+    }
+
+    /**
+     * Generic method to set the primary key (idmarca column).
+     *
+     * @param       int $key Primary key.
+     * @return void
+     */
+    public function setPrimaryKey($key)
+    {
+        $this->setIdmarca($key);
+    }
+
+    /**
+     * Returns true if the primary key for this object is null.
+     * @return boolean
+     */
+    public function isPrimaryKeyNull()
+    {
+        return null === $this->getIdmarca();
+    }
+
+    /**
+     * Sets contents of passed object to values from current object.
+     *
+     * If desired, this method can also make copies of all associated (fkey referrers)
+     * objects.
+     *
+     * @param      object $copyObj An object of \models\models\Marca (or compatible) type.
+     * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
+     * @param      boolean $makeNew Whether to reset autoincrement PKs and make the object new.
+     * @throws PropelException
+     */
+    public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
+    {
+        $copyObj->setNombre($this->getNombre());
+        $copyObj->setActivo($this->getActivo());
+
+        if ($deepCopy) {
+            // important: temporarily setNew(false) because this affects the behavior of
+            // the getter/setter methods for fkey referrer objects.
+            $copyObj->setNew(false);
+
+            foreach ($this->getProductos() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addProducto($relObj->copy($deepCopy));
+                }
+            }
+
+        } // if ($deepCopy)
+
+        if ($makeNew) {
+            $copyObj->setNew(true);
+            $copyObj->setIdmarca(NULL); // this is a auto-increment column, so set to default value
+        }
+    }
+
+    /**
+     * Makes a copy of this object that will be inserted as a new row in table when saved.
+     * It creates a new object filling in the simple attributes, but skipping any primary
+     * keys that are defined for the table.
+     *
+     * If desired, this method can also make copies of all associated (fkey referrers)
+     * objects.
+     *
+     * @param  boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
+     * @return \models\models\Marca Clone of current object.
+     * @throws PropelException
+     */
+    public function copy($deepCopy = false)
+    {
+        // we use get_class(), because this might be a subclass
+        $clazz = get_class($this);
+        $copyObj = new $clazz();
+        $this->copyInto($copyObj, $deepCopy);
+
+        return $copyObj;
+    }
+
+
+    /**
+     * Initializes a collection based on the name of a relation.
+     * Avoids crafting an 'init[$relationName]s' method name
+     * that wouldn't work when StandardEnglishPluralizer is used.
+     *
+     * @param      string $relationName The name of the relation to initialize
+     * @return void
+     */
+    public function initRelation($relationName)
+    {
+        if ('Producto' == $relationName) {
+            $this->initProductos();
+            return;
+        }
+    }
+
+    /**
+     * Clears out the collProductos collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        addProductos()
+     */
+    public function clearProductos()
+    {
+        $this->collProductos = null; // important to set this to NULL since that means it is uninitialized
+    }
+
+    /**
+     * Reset is the collProductos collection loaded partially.
+     */
+    public function resetPartialProductos($v = true)
+    {
+        $this->collProductosPartial = $v;
+    }
+
+    /**
+     * Initializes the collProductos collection.
+     *
+     * By default this just sets the collProductos collection to an empty array (like clearcollProductos());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param      boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initProductos($overrideExisting = true)
+    {
+        if (null !== $this->collProductos && !$overrideExisting) {
+            return;
+        }
+
+        $collectionClassName = ProductoTableMap::getTableMap()->getCollectionClassName();
+
+        $this->collProductos = new $collectionClassName;
+        $this->collProductos->setModel('\models\models\Producto');
+    }
+
+    /**
+     * Gets an array of ChildProducto objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildMarca is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @return ObjectCollection|ChildProducto[] List of ChildProducto objects
+     * @throws PropelException
+     */
+    public function getProductos(Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        $partial = $this->collProductosPartial && !$this->isNew();
+        if (null === $this->collProductos || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collProductos) {
+                // return empty collection
+                $this->initProductos();
+            } else {
+                $collProductos = ChildProductoQuery::create(null, $criteria)
+                    ->filterByMarca($this)
+                    ->find($con);
+
+                if (null !== $criteria) {
+                    if (false !== $this->collProductosPartial && count($collProductos)) {
+                        $this->initProductos(false);
+
+                        foreach ($collProductos as $obj) {
+                            if (false == $this->collProductos->contains($obj)) {
+                                $this->collProductos->append($obj);
+                            }
+                        }
+
+                        $this->collProductosPartial = true;
+                    }
+
+                    return $collProductos;
+                }
+
+                if ($partial && $this->collProductos) {
+                    foreach ($this->collProductos as $obj) {
+                        if ($obj->isNew()) {
+                            $collProductos[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collProductos = $collProductos;
+                $this->collProductosPartial = false;
+            }
+        }
+
+        return $this->collProductos;
+    }
+
+    /**
+     * Sets a collection of ChildProducto objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param      Collection $productos A Propel collection.
+     * @param      ConnectionInterface $con Optional connection object
+     * @return $this|ChildMarca The current object (for fluent API support)
+     */
+    public function setProductos(Collection $productos, ConnectionInterface $con = null)
+    {
+        /** @var ChildProducto[] $productosToDelete */
+        $productosToDelete = $this->getProductos(new Criteria(), $con)->diff($productos);
+
+
+        $this->productosScheduledForDeletion = $productosToDelete;
+
+        foreach ($productosToDelete as $productoRemoved) {
+            $productoRemoved->setMarca(null);
+        }
+
+        $this->collProductos = null;
+        foreach ($productos as $producto) {
+            $this->addProducto($producto);
+        }
+
+        $this->collProductos = $productos;
+        $this->collProductosPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related Producto objects.
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct
+     * @param      ConnectionInterface $con
+     * @return int             Count of related Producto objects.
+     * @throws PropelException
+     */
+    public function countProductos(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    {
+        $partial = $this->collProductosPartial && !$this->isNew();
+        if (null === $this->collProductos || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collProductos) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getProductos());
+            }
+
+            $query = ChildProductoQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByMarca($this)
+                ->count($con);
+        }
+
+        return count($this->collProductos);
+    }
+
+    /**
+     * Method called to associate a ChildProducto object to this object
+     * through the ChildProducto foreign key attribute.
+     *
+     * @param  ChildProducto $l ChildProducto
+     * @return $this|\models\models\Marca The current object (for fluent API support)
+     */
+    public function addProducto(ChildProducto $l)
+    {
+        if ($this->collProductos === null) {
+            $this->initProductos();
+            $this->collProductosPartial = true;
+        }
+
+        if (!$this->collProductos->contains($l)) {
+            $this->doAddProducto($l);
+
+            if ($this->productosScheduledForDeletion and $this->productosScheduledForDeletion->contains($l)) {
+                $this->productosScheduledForDeletion->remove($this->productosScheduledForDeletion->search($l));
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param ChildProducto $producto The ChildProducto object to add.
+     */
+    protected function doAddProducto(ChildProducto $producto)
+    {
+        $this->collProductos[]= $producto;
+        $producto->setMarca($this);
+    }
+
+    /**
+     * @param  ChildProducto $producto The ChildProducto object to remove.
+     * @return $this|ChildMarca The current object (for fluent API support)
+     */
+    public function removeProducto(ChildProducto $producto)
+    {
+        if ($this->getProductos()->contains($producto)) {
+            $pos = $this->collProductos->search($producto);
+            $this->collProductos->remove($pos);
+            if (null === $this->productosScheduledForDeletion) {
+                $this->productosScheduledForDeletion = clone $this->collProductos;
+                $this->productosScheduledForDeletion->clear();
+            }
+            $this->productosScheduledForDeletion[]= clone $producto;
+            $producto->setMarca(null);
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this Marca is new, it will return
+     * an empty collection; or if this Marca has previously
+     * been saved, it will retrieve related Productos from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in Marca.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return ObjectCollection|ChildProducto[] List of ChildProducto objects
+     */
+    public function getProductosJoinProveedor(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
+    {
+        $query = ChildProductoQuery::create(null, $criteria);
+        $query->joinWith('Proveedor', $joinBehavior);
+
+        return $this->getProductos($query, $con);
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this Marca is new, it will return
+     * an empty collection; or if this Marca has previously
+     * been saved, it will retrieve related Productos from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in Marca.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return ObjectCollection|ChildProducto[] List of ChildProducto objects
+     */
+    public function getProductosJoinTipoproducto(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
+    {
+        $query = ChildProductoQuery::create(null, $criteria);
+        $query->joinWith('Tipoproducto', $joinBehavior);
+
+        return $this->getProductos($query, $con);
+    }
+
+    /**
+     * Clears the current object, sets all attributes to their default values and removes
+     * outgoing references as well as back-references (from other objects to this one. Results probably in a database
+     * change of those foreign objects when you call `save` there).
+     */
+    public function clear()
+    {
+        $this->idmarca = null;
+        $this->nombre = null;
+        $this->activo = null;
+        $this->alreadyInSave = false;
+        $this->clearAllReferences();
+        $this->resetModified();
+        $this->setNew(true);
+        $this->setDeleted(false);
+    }
+
+    /**
+     * Resets all references and back-references to other model objects or collections of model objects.
+     *
+     * This method is used to reset all php object references (not the actual reference in the database).
+     * Necessary for object serialisation.
+     *
+     * @param      boolean $deep Whether to also clear the references on all referrer objects.
+     */
+    public function clearAllReferences($deep = false)
+    {
+        if ($deep) {
+            if ($this->collProductos) {
+                foreach ($this->collProductos as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
+        } // if ($deep)
+
+        $this->collProductos = null;
+    }
+
+    /**
+     * Return the string representation of this object
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return (string) $this->exportTo(MarcaTableMap::DEFAULT_STRING_FORMAT);
+    }
+
+    /**
+     * Code to be run before persisting the object
+     * @param  ConnectionInterface $con
+     * @return boolean
+     */
+    public function preSave(ConnectionInterface $con = null)
+    {
+        if (is_callable('parent::preSave')) {
+            return parent::preSave($con);
+        }
+        return true;
+    }
+
+    /**
+     * Code to be run after persisting the object
+     * @param ConnectionInterface $con
+     */
+    public function postSave(ConnectionInterface $con = null)
+    {
+        if (is_callable('parent::postSave')) {
+            parent::postSave($con);
+        }
+    }
+
+    /**
+     * Code to be run before inserting to database
+     * @param  ConnectionInterface $con
+     * @return boolean
+     */
+    public function preInsert(ConnectionInterface $con = null)
+    {
+        if (is_callable('parent::preInsert')) {
+            return parent::preInsert($con);
+        }
+        return true;
+    }
+
+    /**
+     * Code to be run after inserting to database
+     * @param ConnectionInterface $con
+     */
+    public function postInsert(ConnectionInterface $con = null)
+    {
+        if (is_callable('parent::postInsert')) {
+            parent::postInsert($con);
+        }
+    }
+
+    /**
+     * Code to be run before updating the object in database
+     * @param  ConnectionInterface $con
+     * @return boolean
+     */
+    public function preUpdate(ConnectionInterface $con = null)
+    {
+        if (is_callable('parent::preUpdate')) {
+            return parent::preUpdate($con);
+        }
+        return true;
+    }
+
+    /**
+     * Code to be run after updating the object in database
+     * @param ConnectionInterface $con
+     */
+    public function postUpdate(ConnectionInterface $con = null)
+    {
+        if (is_callable('parent::postUpdate')) {
+            parent::postUpdate($con);
+        }
+    }
+
+    /**
+     * Code to be run before deleting the object in database
+     * @param  ConnectionInterface $con
+     * @return boolean
+     */
+    public function preDelete(ConnectionInterface $con = null)
+    {
+        if (is_callable('parent::preDelete')) {
+            return parent::preDelete($con);
+        }
+        return true;
+    }
+
+    /**
+     * Code to be run after deleting the object in database
+     * @param ConnectionInterface $con
+     */
+    public function postDelete(ConnectionInterface $con = null)
+    {
+        if (is_callable('parent::postDelete')) {
+            parent::postDelete($con);
+        }
+    }
+
+
+    /**
+     * Derived method to catches calls to undefined methods.
+     *
+     * Provides magic import/export method support (fromXML()/toXML(), fromYAML()/toYAML(), etc.).
+     * Allows to define default __call() behavior if you overwrite __call()
+     *
+     * @param string $name
+     * @param mixed  $params
+     *
+     * @return array|string
+     */
+    public function __call($name, $params)
+    {
+        if (0 === strpos($name, 'get')) {
+            $virtualColumn = substr($name, 3);
+            if ($this->hasVirtualColumn($virtualColumn)) {
+                return $this->getVirtualColumn($virtualColumn);
+            }
+
+            $virtualColumn = lcfirst($virtualColumn);
+            if ($this->hasVirtualColumn($virtualColumn)) {
+                return $this->getVirtualColumn($virtualColumn);
+            }
+        }
+
+        if (0 === strpos($name, 'from')) {
+            $format = substr($name, 4);
+
+            return $this->importFrom($format, reset($params));
+        }
+
+        if (0 === strpos($name, 'to')) {
+            $format = substr($name, 2);
+            $includeLazyLoadColumns = isset($params[0]) ? $params[0] : true;
+
+            return $this->exportTo($format, $includeLazyLoadColumns);
+        }
+
+        throw new BadMethodCallException(sprintf('Call to undefined method: %s.', $name));
+    }
+
+}

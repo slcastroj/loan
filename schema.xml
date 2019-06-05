@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<database name="default" defaultIdMethod="native" namespace="models" defaultPhpNamingMethod="underscore">
+  <table name="boleta" idMethod="native" phpName="Boleta" namespace="models">
+    <column name="idBoleta" phpName="Idboleta" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="idUsuario" phpName="Idusuario" type="INTEGER" required="true"/>
+    <column name="idSucursal" phpName="Idsucursal" type="INTEGER" required="true"/>
+    <column name="fecha" phpName="Fecha" type="DATE" required="true"/>
+    <column name="total" phpName="Total" type="INTEGER" required="true"/>
+    <foreign-key foreignTable="usuario" name="boleta_ibfk_1">
+      <reference local="idUsuario" foreign="idUsuario"/>
+    </foreign-key>
+    <foreign-key foreignTable="sucursal" name="boleta_ibfk_2">
+      <reference local="idSucursal" foreign="idSucursal"/>
+    </foreign-key>
+    <index name="idUsuario">
+      <index-column name="idUsuario"/>
+    </index>
+    <index name="idSucursal">
+      <index-column name="idSucursal"/>
+    </index>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
+  <table name="detalle" idMethod="native" phpName="Detalle" namespace="models">
+    <column name="idDetalle" phpName="Iddetalle" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="idBoleta" phpName="Idboleta" type="INTEGER" required="true"/>
+    <column name="idProducto" phpName="Idproducto" type="INTEGER" required="true"/>
+    <column name="cantidad" phpName="Cantidad" type="INTEGER" required="true"/>
+    <column name="precio" phpName="Precio" type="INTEGER" required="true"/>
+    <column name="subTotal" phpName="Subtotal" type="INTEGER" required="true"/>
+    <foreign-key foreignTable="boleta" name="detalle_ibfk_1">
+      <reference local="idBoleta" foreign="idBoleta"/>
+    </foreign-key>
+    <foreign-key foreignTable="producto" name="detalle_ibfk_2">
+      <reference local="idProducto" foreign="idProducto"/>
+    </foreign-key>
+    <index name="idBoleta">
+      <index-column name="idBoleta"/>
+    </index>
+    <index name="idProducto">
+      <index-column name="idProducto"/>
+    </index>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
+  <table name="marca" idMethod="native" phpName="Marca" namespace="models">
+    <column name="idMarca" phpName="Idmarca" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="nombre" phpName="Nombre" type="VARCHAR" size="100" required="true"/>
+    <column name="activo" phpName="Activo" type="TINYINT" required="true"/>
+    <unique name="nombre">
+      <unique-column name="nombre"/>
+    </unique>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
+  <table name="producto" idMethod="native" phpName="Producto" namespace="models">
+    <column name="idProducto" phpName="Idproducto" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="idMarca" phpName="Idmarca" type="INTEGER" required="true"/>
+    <column name="idProveedor" phpName="Idproveedor" type="INTEGER" required="true"/>
+    <column name="idTipoProducto" phpName="Idtipoproducto" type="INTEGER" required="true"/>
+    <column name="nombreProducto" phpName="Nombreproducto" type="VARCHAR" size="200" required="true"/>
+    <column name="codigo" phpName="Codigo" type="INTEGER" required="true"/>
+    <column name="descripcion" phpName="Descripcion" type="VARCHAR" size="2000" required="true"/>
+    <column name="stock" phpName="Stock" type="INTEGER" required="true"/>
+    <column name="stockMinimo" phpName="Stockminimo" type="INTEGER" required="true"/>
+    <column name="precio" phpName="Precio" type="INTEGER" required="true"/>
+    <column name="activo" phpName="Activo" type="TINYINT" required="true"/>
+    <foreign-key foreignTable="marca" name="producto_ibfk_1">
+      <reference local="idMarca" foreign="idMarca"/>
+    </foreign-key>
+    <foreign-key foreignTable="proveedor" name="producto_ibfk_2">
+      <reference local="idProveedor" foreign="idProveedor"/>
+    </foreign-key>
+    <foreign-key foreignTable="tipoproducto" name="producto_ibfk_3">
+      <reference local="idTipoProducto" foreign="idTipoProducto"/>
+    </foreign-key>
+    <index name="idMarca">
+      <index-column name="idMarca"/>
+    </index>
+    <index name="idProveedor">
+      <index-column name="idProveedor"/>
+    </index>
+    <index name="idTipoProducto">
+      <index-column name="idTipoProducto"/>
+    </index>
+    <unique name="codigo">
+      <unique-column name="codigo"/>
+    </unique>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
+  <table name="proveedor" idMethod="native" phpName="Proveedor" namespace="models">
+    <column name="idProveedor" phpName="Idproveedor" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="nombre" phpName="Nombre" type="VARCHAR" size="100" required="true"/>
+    <column name="activo" phpName="Activo" type="TINYINT" required="true"/>
+    <unique name="nombre">
+      <unique-column name="nombre"/>
+    </unique>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
+  <table name="sucursal" idMethod="native" phpName="Sucursal" namespace="models">
+    <column name="idSucursal" phpName="Idsucursal" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="nombre" phpName="Nombre" type="VARCHAR" size="100" required="true"/>
+    <column name="activo" phpName="Activo" type="TINYINT" required="true"/>
+    <unique name="nombre">
+      <unique-column name="nombre"/>
+    </unique>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
+  <table name="tipoproducto" idMethod="native" phpName="Tipoproducto" namespace="models">
+    <column name="idTipoProducto" phpName="Idtipoproducto" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="nombre" phpName="Nombre" type="VARCHAR" size="100" required="true"/>
+    <column name="activo" phpName="Activo" type="TINYINT" required="true"/>
+    <unique name="nombre">
+      <unique-column name="nombre"/>
+    </unique>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
+  <table name="usuario" idMethod="native" phpName="Usuario" namespace="models">
+    <column name="idUsuario" phpName="Idusuario" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="idSucursal" phpName="Idsucursal" type="INTEGER" required="true"/>
+    <column name="rut" phpName="Rut" type="INTEGER" required="true"/>
+    <column name="digito" phpName="Digito" type="VARCHAR" size="1" required="true"/>
+    <column name="nombre" phpName="Nombre" type="VARCHAR" size="50" required="true"/>
+    <column name="paterno" phpName="Paterno" type="VARCHAR" size="50" required="true"/>
+    <column name="materno" phpName="Materno" type="VARCHAR" size="50" required="true"/>
+    <column name="clave" phpName="Clave" type="VARCHAR" size="50" required="true"/>
+    <column name="activo" phpName="Activo" type="TINYINT" required="true"/>
+    <column name="esVendedor" phpName="Esvendedor" type="TINYINT" required="true"/>
+    <unique name="rut">
+      <unique-column name="rut"/>
+    </unique>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
+</database>
