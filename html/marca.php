@@ -6,7 +6,27 @@ include_once("../php/utils.php");
 validarUsuario(false);
 
 use models\models\MarcaQuery;
+use models\models\Marca;
 
+$method = $_SERVER['REQUEST_METHOD'];
+if($method === 'POST') {
+    $p = new Marca();
+    $p->setNombre($_POST['nombre']);
+    $p->setActivo($_POST['activo']);
+    $p->save();
+
+    header('Content-type: application/json');
+    echo json_encode($p);
+    die();
+}
+else if($method === 'DELETE') {
+    $p = MarcaQuery::create()->findOneByIdmarca($_GET['index']);
+    $p->delete();
+
+    header('Content-type: application/json');
+    echo json_encode($p);
+    die();
+}
 ?>
 <!DOCTYPE html>
 <head>
@@ -34,7 +54,7 @@ use models\models\MarcaQuery;
                 </div>
                 <div class="text-right col-12">
                     <button class="btn btn-outline-danger col-12 col-lg-4 btn-sm mb-3 mb-lg-0">Limpiar campos</button>
-                    <input type="submit" class="btn btn-primary col-12 col-lg-4" value="Agregar">
+                    <input onclick="agregarMarca()" type="button" class="btn btn-primary col-12 col-lg-4" value="Agregar">
                 </div>
             </div>
             </form>
@@ -43,6 +63,7 @@ use models\models\MarcaQuery;
                 $Marcas = MarcaQuery::create()->find();
 
                 foreach ($Marcas as $marca) {
+                    $index = $marca->getIdmarca();
                     $nombre = $marca->getNombre();
                     $activo = $marca->getActivo() != 0 ? 'Si' : 'No';                    
 
@@ -52,7 +73,7 @@ use models\models\MarcaQuery;
                         <span class=\"text-secondary\">Activo: $activo</span>
                         </div>
                     <div class=\"col-12 text-right\">
-                        <button class=\"btn btn-danger col-12 col-lg-4 btn-sm mb-3 mb-lg-0\">Eliminar</button>
+                        <button onclick=\"eliminarMarca($index)\" class=\"btn btn-danger col-12 col-lg-4 btn-sm mb-3 mb-lg-0\">Eliminar</button>
                     </div>
                 </div>";
                 }
