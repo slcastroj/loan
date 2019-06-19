@@ -3,6 +3,10 @@ include_once("../vendor/autoload.php");
 include_once("../generated-conf/config.php");
 
 use models\models\ProductoQuery;
+use models\models\Base\TipoproductoQuery;
+use models\models\MarcaQuery;
+use models\models\ProveedorQuery;
+
 ?>
 <!DOCTYPE html>
 <head>
@@ -27,31 +31,46 @@ use models\models\ProductoQuery;
                 <div class="form-group col-12 col-lg-6">
                     <label for="pckTipo">Tipo:</label>
                     <select name="tipo" id="pckTipo" class="form-control">
-                        <option value="">1</option>
-                        <option value="">2</option>
-                        <option value="">3</option>
-                        <option value="">4</option>
-                        <option value="">5</option>
+                        <?php
+                        $tipos = TipoproductoQuery::create()->find();
+
+                        foreach($tipos as $tipo) {
+                            $id = $tipo->getIdtipoproducto();
+                            $nombre = $tipo->getNombre();
+
+                            echo "<option value=\"$id\">$nombre</option>";
+                        }
+                        ?>
                     </select>
                 </div>
                 <div class="form-group col-12 col-lg-6">
                     <label for="pckMarca">Marca:</label>
                     <select name="marca" id="pckMarca" class="form-control">
-                        <option value="">1</option>
-                        <option value="">2</option>
-                        <option value="">3</option>
-                        <option value="">4</option>
-                        <option value="">5</option>
+                        <?php
+                        $marcas = MarcaQuery::create()->find();
+
+                        foreach($marcas as $marca) {
+                            $id = $marca->getIdmarca()();
+                            $nombre = $marca->getNombre();
+
+                            echo "<option value=\"$id\">$nombre</option>";
+                        }
+                        ?>
                     </select>
                 </div>
                 <div class="form-group col-12 col-lg-6">
                     <label for="pckProveedor">Proveedor:</label>
                     <select name="proveedor" id="pckProveedor" class="form-control">
-                        <option value="">1</option>
-                        <option value="">2</option>
-                        <option value="">3</option>
-                        <option value="">4</option>
-                        <option value="">5</option>
+                        <?php
+                        $proveedores = ProveedorQuery::create()->find();
+
+                        foreach($proveedores as $proveedor) {
+                            $id = $proveedor->getIdproveedor();
+                            $nombre = $proveedor->getNombre();
+
+                            echo "<option value=\"$id\">$nombre</option>";
+                        }
+                        ?>
                     </select>
                 </div>
                 <div class="form-group col-12 col-lg-6">

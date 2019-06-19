@@ -1,3 +1,18 @@
+<?php
+use models\models\UsuarioQuery;
+
+include_once("../vendor/autoload.php");
+include_once("../generated-conf/config.php");
+
+if(!isset($_POST)) { return; }
+
+$usuario = UsuarioQuery::create()->findOneByRut($_POST['rut']);
+if($usuario->getClave() === $_POST['contrasenya']) {
+    setcookie('sesion');
+    header('Location: html/ventas.php', TRUE, 302);
+}
+?>
+
 <!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
@@ -8,14 +23,14 @@
 <body>
     <main class="container-fluid">
         <div class="row mt-5 m-lg-5">
-            <form action="ventas.php" method="POST" class="col-12 col-lg-4 mx-auto">
+            <form action="inicio_sesion.php" method="POST" class="col-12 col-lg-4 mx-auto">
                 <div class="form-group">
                     <label for="txtRut">Rut usuario:</label>
                     <input type="text" id="txtRut" name="rut" class="form-control">
                 </div>
                 <div class="form-group">
                     <label for="txtContrasena">Contraseña:</label>
-                    <input type="password" id="txtContrasena" name="contraseña" class="form-control">
+                    <input type="password" id="txtContrasena" name="contrasenya" class="form-control">
                 </div>
                 <div class="form-group text-right">
                     <small><a href="" class="text-danger">¿Olvidaste tu contraseña?</a></small>
