@@ -3,7 +3,7 @@ include_once("../vendor/autoload.php");
 include_once("../generated-conf/config.php");
 
 
-use models\models\TipoProductoQuery;
+use models\models\TipoproductoQuery;
 
 ?>
 <!DOCTYPE html>
@@ -16,6 +16,8 @@ use models\models\TipoProductoQuery;
 <body>
     <main class="container-fluid">
         <div class="row mt-5 m-lg-5">
+            <?php include_once('../templates/cerrar_sesion.php'); ?>
+            <a href="administrar.php" class="col-12 text-secondary mb-3" style="cursor:pointer">Atrás</a>
             <form action="" class="col-12 col-lg-6">
             <div class="row">
                 <div class="form-group col-12 col-lg-6">
@@ -37,11 +39,11 @@ use models\models\TipoProductoQuery;
             </form>
             <div class="col-12 col-lg-6 p-5" style="height:500px; overflow-y:scroll">
                 <?php
-                $proveedores = ProveedorQuery::create()->find();
+                $tipos = TipoproductoQuery::create()->find();
 
-                foreach ($proveedores as $proveedor) {
-                    $nombre = $proveedor->getNombre();
-                    $activo = $proveedor->getActivo() != 0 ? 'Si' : 'No';                    
+                foreach ($tipos as $tipo) {
+                    $nombre = $tipo->getNombre();
+                    $activo = $tipo->getActivo() != 0 ? 'Si' : 'No';                    
 
                     echo "<div class=\"row border rounded p-2 mb-3\">
                     <span class=\"text-primary col-12\">$nombre</span>

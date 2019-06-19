@@ -1,4 +1,19 @@
 <?php
+use models\models\UsuarioQuery;
+
+include_once("../vendor/autoload.php");
+include_once("../generated-conf/config.php");
+
+if(!isset($_COOKIE['sesion'])) {
+    header('Location: inicio_sesion.php', TRUE, 302);
+}
+
+$usuario = UsuarioQuery::create()->findOneByRut($_COOKIE['sesion']);
+$esVendedor = $usuario->getEsvendedor() != 0 ? true : false;
+
+if(!$esVendedor) {
+    header('Location: administrar.php', TRUE, 302);
+}
 ?>
 <!DOCTYPE html>
 <head>
@@ -10,6 +25,7 @@
 <body>
     <main class="container-fluid">
         <div class="row m-2 m-lg-5">
+            <?php include_once('../templates/cerrar_sesion.php'); ?>
             <div class="col-12 col-lg-3">
                 <input type="search" id="txtBusquedaAgregar" class="form-control">
                 <select id="pckProductoAgregar" class="form-control mt-3" size="15">

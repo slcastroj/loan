@@ -4,3 +4,5 @@
 
 <link rel="stylesheet" href="../static/css/bootstrap.min.css">
 <script src="../static/js/bootstrap.bundle.min.js"></script>
+
+<script src="../static/js/base.js"></script>

@@ -4,12 +4,12 @@ use models\models\UsuarioQuery;
 include_once("../vendor/autoload.php");
 include_once("../generated-conf/config.php");
 
-if(!isset($_POST)) { return; }
-
-$usuario = UsuarioQuery::create()->findOneByRut($_POST['rut']);
-if($usuario->getClave() === $_POST['contrasenya']) {
-    setcookie('sesion');
-    header('Location: html/ventas.php', TRUE, 302);
+if($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $usuario = UsuarioQuery::create()->findOneByRut($_POST['rut']);
+    if($usuario->getClave() === $_POST['contrasenya']) {
+        setcookie('sesion', $usuario->getRut());
+        header('Location: ventas.php', TRUE, 302);
+    }
 }
 ?>
 
