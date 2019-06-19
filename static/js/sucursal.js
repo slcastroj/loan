@@ -1,7 +1,7 @@
 function agregarSucursal() {
     var data = {
         nombre: $("#txtNombre").val(),
-        activo: $("#pckActivo").val(),
+        activo: $("#pckActivo").val()
     };
     $.ajax({
         type: 'POST',

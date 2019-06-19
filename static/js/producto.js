@@ -8,7 +8,7 @@ function agregarProducto() {
         activo: $("#pckActivo").val(),
         stock: $("#txtStock").val(),
         stockMinimo: $("#txtStockMinimo").val(),
-        descripcion: $("#txtDescripcion").val(),
+        descripcion: $("#txtDescripcion").val()
     };
     $.ajax({
         type: 'POST',
