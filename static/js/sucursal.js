@@ -21,5 +21,5 @@ function eliminarSucursal(index) {
         success: function (rs) {
             location.reload(true);
         }
-      });
+    });
 }

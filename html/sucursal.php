@@ -1,18 +1,40 @@
 <?php
 include_once("../vendor/autoload.php");
 include_once("../generated-conf/config.php");
-
+include_once("../php/utils.php");
 
 use models\models\SucursalQuery;
+use models\models\Sucursal;
 
+validarUsuario(false);
+
+$method = $_SERVER['REQUEST_METHOD'];
+if($method === 'POST') {
+    $p = new Sucursal();
+    $p->setNombre($_POST['nombre']);
+    $p->setActivo($_POST['activo']);
+    $p->save();
+
+    header('Content-type: application/json');
+    echo json_encode($p);
+    die();
+}
+else if($method === 'DELETE') {
+    $p = SucursalQuery::create()->findOneByIdsucursal($_GET['index']);
+    $p->delete();
+
+    header('Content-type: application/json');
+    echo json_encode($p);
+    die();
+}
 ?>
 <!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <?php include_once("../templates/imports.php"); ?>
-    <title>Índice</title>
     <script src="../static/js/sucursal.js"></script>
+    <title>Índice</title>
 </head>
 <body>
     <main class="container-fluid">
@@ -34,7 +56,7 @@ use models\models\SucursalQuery;
                 </div>
                 <div class="text-right col-12">
                     <button class="btn btn-outline-danger col-12 col-lg-4 btn-sm mb-3 mb-lg-0">Limpiar campos</button>
-                    <input type="submit" class="btn btn-primary col-12 col-lg-4" value="Agregar">
+                    <input onclick="agregarSucursal()" type="button" class="btn btn-primary col-12 col-lg-4" value="Agregar">
                 </div>
             </div>
             </form>
@@ -43,6 +65,7 @@ use models\models\SucursalQuery;
                 $Sucursales = SucursalQuery::create()->find();
 
                 foreach ($Sucursales as $sucursal) {
+                    $index = $sucursal->getIdsucursal();
                     $nombre = $sucursal->getNombre();
                     $activo = $sucursal->getActivo() != 0 ? 'Si' : 'No';                    
 
@@ -52,7 +75,7 @@ use models\models\SucursalQuery;
                         <span class=\"text-secondary\">Activo: $activo</span>
                         </div>
                     <div class=\"col-12 text-right\">
-                        <button class=\"btn btn-danger col-12 col-lg-4 btn-sm mb-3 mb-lg-0\">Eliminar</button>
+                        <button onclick=\"eliminarSucursal($index)\" class=\"btn btn-danger col-12 col-lg-4 btn-sm mb-3 mb-lg-0\">Eliminar</button>
                     </div>
                 </div>";
                 }
