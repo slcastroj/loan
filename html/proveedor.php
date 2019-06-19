@@ -15,7 +15,7 @@ use models\models\ProveedorQuery;
 </head>
 <body>
     <main class="container-fluid">
-        <div class="row mt-5 m-lg-5">
+        <div class="row mt-5 m-lg-5"> 
             <form action="" class="col-12 col-lg-6">
             <div class="row">
                 <div class="form-group col-12 col-lg-6">
