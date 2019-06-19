@@ -6,19 +6,11 @@ use models\models\ProductoQuery;
 use models\models\Base\TipoproductoQuery;
 use models\models\MarcaQuery;
 use models\models\ProveedorQuery;
-use models\models\UsuarioQuery;
 use models\models\Producto;
 
-if(!isset($_COOKIE['sesion'])) {
-    header('Location: inicio_sesion.php', TRUE, 302);
-}
+include_once("../php/utils.php");
 
-$usuario = UsuarioQuery::create()->findOneByRut($_COOKIE['sesion']);
-$esVendedor = $usuario->getEsvendedor() != 0 ? true : false;
-
-if($esVendedor) {
-    header('Location: ventas.php', TRUE, 302);
-}
+validarUsuario(false);
 
 $method = $_SERVER['REQUEST_METHOD'];
 if($method === 'POST') {

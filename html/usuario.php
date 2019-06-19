@@ -1,22 +1,13 @@
 <?php
-include_once("../vendor/autoload.php");
-include_once("../generated-conf/config.php");
-
 use models\models\SucursalQuery;
-use models\models\ProductoQuery;
 use models\models\UsuarioQuery;
 use models\models\Usuario;
 
-if(!isset($_COOKIE['sesion'])) {
-    header('Location: inicio_sesion.php', TRUE, 302);
-}
+include_once("../vendor/autoload.php");
+include_once("../generated-conf/config.php");
+include_once("../php/utils.php");
 
-$usuario = UsuarioQuery::create()->findOneByRut($_COOKIE['sesion']);
-$esVendedor = $usuario->getEsvendedor() != 0 ? true : false;
-
-if($esVendedor) {
-    header('Location: ventas.php', TRUE, 302);
-}
+validarUsuario(false);
 
 $method = $_SERVER['REQUEST_METHOD'];
 if($method === 'POST') {

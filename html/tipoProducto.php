@@ -1,9 +1,11 @@
 <?php
+use models\models\TipoproductoQuery;
 include_once("../vendor/autoload.php");
 include_once("../generated-conf/config.php");
+include_once("../php/utils.php");
 
+validarUsuario(false);
 
-use models\models\TipoproductoQuery;
 
 ?>
 <!DOCTYPE html>

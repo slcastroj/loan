@@ -3,17 +3,9 @@ use models\models\UsuarioQuery;
 
 include_once("../vendor/autoload.php");
 include_once("../generated-conf/config.php");
+include_once("../php/utils.php");
 
-if(!isset($_COOKIE['sesion'])) {
-    header('Location: inicio_sesion.php', TRUE, 302);
-}
-
-$usuario = UsuarioQuery::create()->findOneByRut($_COOKIE['sesion']);
-$esVendedor = $usuario->getEsvendedor() != 0 ? true : false;
-
-if(!$esVendedor) {
-    header('Location: administrar.php', TRUE, 302);
-}
+validarUsuario(true);
 ?>
 <!DOCTYPE html>
 <head>
