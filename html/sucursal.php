@@ -12,6 +12,7 @@ use models\models\SucursalQuery;
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <?php include_once("../templates/imports.php"); ?>
     <title>Índice</title>
+    <script src="../static/js/sucursal.js"></script>
 </head>
 <body>
     <main class="container-fluid">

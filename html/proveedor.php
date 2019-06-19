@@ -12,6 +12,7 @@ use models\models\ProveedorQuery;
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <?php include_once("../templates/imports.php"); ?>
     <title>Índice</title>
+    <script src="../static/js/proveedor.js"></script>
 </head>
 <body>
     <main class="container-fluid">
