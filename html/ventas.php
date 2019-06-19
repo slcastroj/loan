@@ -1,5 +1,6 @@
 <?php
 use models\models\UsuarioQuery;
+use models\models\ProductoQuery;
 
 include_once("../vendor/autoload.php");
 include_once("../generated-conf/config.php");
@@ -22,70 +23,39 @@ validarUsuario(true);
             <div class="col-12 col-lg-3">
                 <input type="search" id="txtBusquedaAgregar" class="form-control">
                 <select id="pckProductoAgregar" class="form-control mt-3" size="15">
-                    <option value="">1</option>
-                    <option value="">2</option>
-                    <option value="">3</option>
-                    <option value="">4</option>
-                    <option value="">5</option>
-                    <option value="">6</option>
-                    <option value="">7</option>
-                    <option value="">8</option>
-                    <option value="">9</option>
-                    <option value="">10</option>
-                    <option value="">11</option>
-                    <option value="">12</option>
-                    <option value="">13</option>
-                    <option value="">14</option>
-                    <option value="">15</option>
-                    <option value="">16</option>
-                    <option value="">17</option>
-                    <option value="">18</option>
-                    <option value="">19</option>
-                    <option value="">20</option>
+                    <?php
+                    $productos = ProductoQuery::create()->find();
+
+                    foreach($productos as $producto) {
+                        $id = $producto->getIdproducto();
+                        $nombre = $producto->getNombreproducto();
+                        echo "<option value=\"$id\">$nombre</option>";
+                    }
+                    ?>
                 </select>
                 <label class="mt-2">Cantidad:</label>
                 <input type="text" id="txtCantidad" class="form-control">
 
                 <div class="mt-4 text-right d-none d-lg-block">
-                    <button class="btn btn-outline-danger btn-sm col-3">Limpiar</button>
-                    <button class="btn btn-primary col-4">Vender</button>
+                    <button class="btn btn-outline-danger btn-sm col-4">Limpiar</button>
+                    <button class="btn btn-primary col-5">Vender</button>
                 </div>
             </div>
             <div class="col-12 col-lg-1 d-flex text-center align-items-center justify-content-center my-3 my-lg-0">
                 <div class="d-none d-lg-block">
                     <div class="row">
-                        <button class="col-12 btn btn-outline-primary mb-lg-3">></button>
-                        <button class="col-12 btn btn-outline-danger"><</button>
+                        <button onclick="agregarProducto()" class="col-12 btn btn-outline-primary mb-lg-3">></button>
+                        <button onclick="eliminarProducto()" class="col-12 btn btn-outline-danger"><</button>
                     </div>
                 </div>
                 <div class="d-lg-none">
-                    <button class="btn btn-outline-primary mr-2">v</button>
-                    <button class="btn btn-outline-danger ml-2">^</button>
+                    <button onclick="agregarProducto()" class="btn btn-outline-primary mr-2">v</button>
+                    <button onclick="eliminarProducto()" class="btn btn-outline-danger ml-2">^</button>
                 </div>
             </div>
             <div class="col-12 col-lg-3">
                 <input type="search" id="txtBusquedaAgregado" class="form-control">
                 <select id="pckProductoAgregado" class="form-control mt-3" size="15">
-                    <option value="">1</option>
-                    <option value="">2</option>
-                    <option value="">3</option>
-                    <option value="">4</option>
-                    <option value="">5</option>
-                    <option value="">6</option>
-                    <option value="">7</option>
-                    <option value="">8</option>
-                    <option value="">9</option>
-                    <option value="">10</option>
-                    <option value="">11</option>
-                    <option value="">12</option>
-                    <option value="">13</option>
-                    <option value="">14</option>
-                    <option value="">15</option>
-                    <option value="">16</option>
-                    <option value="">17</option>
-                    <option value="">18</option>
-                    <option value="">19</option>
-                    <option value="">20</option>
                 </select>
                 <div class="mt-4 text-right d-lg-none">
                     <button class="btn btn-outline-danger btn-sm col-12 mb-3">Limpiar</button>
