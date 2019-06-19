@@ -1,4 +1,4 @@
-function agregarProducto() {
+function agregarSucursal() {
     var data = {
         nombre: $("#txtNombre").val(),
         activo: $("#pckActivo").val(),
@@ -14,7 +14,7 @@ function agregarProducto() {
       });
 }
 
-function eliminarProducto(index) {
+function eliminarSucursal(index) {
     $.ajax({
         type: 'DELETE',
         url: 'sucursal.php?'+"index="+index,
