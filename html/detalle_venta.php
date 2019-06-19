@@ -8,7 +8,7 @@
 <body>
     <main class="container-fluid">
         <div class="row mt-5 m-lg-5">
-            
+            <?php include_once('../templates/cerrar_sesion.php'); ?>            
         </div>
     </main>
 </body>
