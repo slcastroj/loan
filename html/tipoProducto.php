@@ -3,7 +3,7 @@ include_once("../vendor/autoload.php");
 include_once("../generated-conf/config.php");
 
 
-use models\models\TipoProductoQuery;
+use models\models\TipoproductoQuery;
 
 ?>
 <!DOCTYPE html>
@@ -37,11 +37,11 @@ use models\models\TipoProductoQuery;
             </form>
             <div class="col-12 col-lg-6 p-5" style="height:500px; overflow-y:scroll">
                 <?php
-                $proveedores = ProveedorQuery::create()->find();
+                $tiposProductos = TipoproductoQuery::create()->find();
 
-                foreach ($proveedores as $proveedor) {
-                    $nombre = $proveedor->getNombre();
-                    $activo = $proveedor->getActivo() != 0 ? 'Si' : 'No';                    
+                foreach ($tiposProductos as $tipoProducto) {
+                    $nombre = $tipoProducto->getNombre();
+                    $activo = $tipoProducto->getActivo() != 0 ? 'Si' : 'No';                    
 
                     echo "<div class=\"row border rounded p-2 mb-3\">
                     <span class=\"text-primary col-12\">$nombre</span>
