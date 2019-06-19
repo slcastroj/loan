@@ -1,3 +1,9 @@
+<?php
+include_once("../vendor/autoload.php");
+include_once("../generated-conf/config.php");
+
+use models\models\ProductoQuery;
+?>
 <!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
@@ -74,28 +80,43 @@
             </div>
             </form>
             <div class="col-12 col-lg-6 p-5" style="height:500px; overflow-y:scroll">
-                <div class="row border rounded p-2">
-                    <span class="text-primary col-12">Nombre</span>
-                    <div class="col-12 col-lg-6">
-                        <span class="text-secondary">Precio: 3000</span>
+                <?php
+                $productos = ProductoQuery::create()->find();
+
+                foreach ($productos as $producto) {
+                    $nombre = $producto->getNombreproducto();
+                    $precio = $producto->getPrecio();
+                    $stock = $producto->getStock();
+                    $stockmin = $producto->getStockminimo();
+                    $activo = $producto->getActivo() != 0 ? 'Si' : 'No';
+                    $proveedor = $producto->getProveedor()->getNombre();
+                    $marca = $producto->getMarca()->getNombre();
+                    $tipo = $producto->getTipoproducto()->getNombre();
+
+                    echo "<div class=\"row border rounded p-2 mb-3\">
+                    <span class=\"text-primary col-12\">$nombre</span>
+                    <div class=\"col-12 col-lg-6\">
+                        <span class=\"text-secondary\">Precio: $precio</span>
                         <br>
-                        <span class="text-secondary">Stock: 4</span>
+                        <span class=\"text-secondary\">Stock: $stock</span>
                         <br>
-                        <span class="text-secondary">Stock Mínimo: 2</span>
+                        <span class=\"text-secondary\">Stock Mínimo: $stockmin</span>
                         <br>
-                        <span class="text-secondary">Activo: No</span>
+                        <span class=\"text-secondary\">Activo: $activo</span>
                     </div>
-                    <div class="col-12 col-lg-6">
-                        <span class="text-secondary">Proveedor: Nose</span>
+                    <div class=\"col-12 col-lg-6\">
+                        <span class=\"text-secondary\">Proveedor: $proveedor</span>
                         <br>
-                        <span class="text-secondary">Marca: Nose</span>
+                        <span class=\"text-secondary\">Marca: $marca</span>
                         <br>
-                        <span class="text-secondary">Tipo: Nose</span>
+                        <span class=\"text-secondary\">Tipo: $tipo</span>
                     </div>
-                    <div class="col-12 text-right">
-                        <button class="btn btn-danger col-12 col-lg-4 btn-sm mb-3 mb-lg-0">Eliminar</button>
+                    <div class=\"col-12 text-right\">
+                        <button class=\"btn btn-danger col-12 col-lg-4 btn-sm mb-3 mb-lg-0\">Eliminar</button>
                     </div>
-                </div>
+                </div>";
+                }
+                ?>
             </div>
         </div>
     </main>
