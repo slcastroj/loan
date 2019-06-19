@@ -6,13 +6,53 @@ use models\models\ProductoQuery;
 use models\models\Base\TipoproductoQuery;
 use models\models\MarcaQuery;
 use models\models\ProveedorQuery;
+use models\models\UsuarioQuery;
+use models\models\Producto;
 
+if(!isset($_COOKIE['sesion'])) {
+    header('Location: inicio_sesion.php', TRUE, 302);
+}
+
+$usuario = UsuarioQuery::create()->findOneByRut($_COOKIE['sesion']);
+$esVendedor = $usuario->getEsvendedor() != 0 ? true : false;
+
+if($esVendedor) {
+    header('Location: ventas.php', TRUE, 302);
+}
+
+$method = $_SERVER['REQUEST_METHOD'];
+if($method === 'POST') {
+    $p = new Producto();
+    $p->setNombreproducto($_POST['nombre']);
+    $p->setPrecio($_POST['precio']);
+    $p->setIdtipoproducto($_POST['tipo']);
+    $p->setIdmarca($_POST['marca']);
+    $p->setIdproveedor($_POST['proveedor']);
+    $p->setActivo($_POST['activo']);
+    $p->setStock($_POST['stock']);
+    $p->setStockminimo($_POST['stockMinimo']);
+    $p->setDescripcion($_POST['descripcion']);
+    $p->save();
+
+    header('Content-type: application/json');
+    echo json_encode($p);
+    die();
+}
+else if($method === 'DELETE') {
+    $p = ProductoQuery::create()->findOneByIdproducto($_GET['index']);
+    $p->delete();
+
+    header('Content-type: application/json');
+    echo json_encode($p);
+    die();
+}
 ?>
 <!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <?php include_once("../templates/imports.php"); ?>
+    <script src="../static/js/producto.js"></script>
     <title>Índice</title>
 </head>
 <body>
@@ -52,7 +92,7 @@ use models\models\ProveedorQuery;
                         $marcas = MarcaQuery::create()->find();
 
                         foreach($marcas as $marca) {
-                            $id = $marca->getIdmarca()();
+                            $id = $marca->getIdmarca();
                             $nombre = $marca->getNombre();
 
                             echo "<option value=\"$id\">$nombre</option>";
@@ -78,8 +118,8 @@ use models\models\ProveedorQuery;
                 <div class="form-group col-12 col-lg-6">
                     <label for="pckActivo">Activo:</label>
                     <select name="activo" id="pckActivo" class="form-control">
-                        <option value="">Si</option>
-                        <option value="">No</option>
+                        <option value="1">Si</option>
+                        <option value="0">No</option>
                     </select>
                 </div>
                 <div class="form-group col-12 col-lg-6">
@@ -96,7 +136,7 @@ use models\models\ProveedorQuery;
                 </div>
                 <div class="text-right col-12">
                     <button class="btn btn-outline-danger col-12 col-lg-4 btn-sm mb-3 mb-lg-0">Limpiar campos</button>
-                    <input type="submit" class="btn btn-primary col-12 col-lg-4" value="Agregar">
+                    <button type="button" class="btn btn-primary col-12 col-lg-4" onclick="agregarProducto()">Agregar</button>
                 </div>
             </div>
             </form>
@@ -105,6 +145,7 @@ use models\models\ProveedorQuery;
                 $productos = ProductoQuery::create()->find();
 
                 foreach ($productos as $producto) {
+                    $index = $producto->getIdproducto();
                     $nombre = $producto->getNombreproducto();
                     $precio = $producto->getPrecio();
                     $stock = $producto->getStock();
@@ -125,7 +166,7 @@ use models\models\ProveedorQuery;
                         <br>
                         <span class=\"text-secondary\">Activo: $activo</span>
                     </div>
-                    <div class=\"col-12 col-lg-6\">
+                    <div class=\"col-12 col-lg-6 mb-3 mb-lg-0\">
                         <span class=\"text-secondary\">Proveedor: $proveedor</span>
                         <br>
                         <span class=\"text-secondary\">Marca: $marca</span>
@@ -133,7 +174,7 @@ use models\models\ProveedorQuery;
                         <span class=\"text-secondary\">Tipo: $tipo</span>
                     </div>
                     <div class=\"col-12 text-right\">
-                        <button class=\"btn btn-danger col-12 col-lg-4 btn-sm mb-3 mb-lg-0\">Eliminar</button>
+                        <button class=\"btn btn-danger col-12 col-lg-4 btn-sm mb-3 mb-lg-0\" onclick=\"eliminarProducto($index)\">Eliminar</button>
                     </div>
                 </div>";
                 }

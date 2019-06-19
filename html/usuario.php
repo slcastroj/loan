@@ -3,14 +3,53 @@ include_once("../vendor/autoload.php");
 include_once("../generated-conf/config.php");
 
 use models\models\SucursalQuery;
+use models\models\ProductoQuery;
 use models\models\UsuarioQuery;
+use models\models\Usuario;
 
+if(!isset($_COOKIE['sesion'])) {
+    header('Location: inicio_sesion.php', TRUE, 302);
+}
+
+$usuario = UsuarioQuery::create()->findOneByRut($_COOKIE['sesion']);
+$esVendedor = $usuario->getEsvendedor() != 0 ? true : false;
+
+if($esVendedor) {
+    header('Location: ventas.php', TRUE, 302);
+}
+
+$method = $_SERVER['REQUEST_METHOD'];
+if($method === 'POST') {
+    $p = new Usuario();
+    $p->setRut($_POST['rut']);
+    $p->setDigito($_POST['dv']);
+    $p->setNombre($_POST['nombre']);
+    $p->setPaterno($_POST['paterno']);
+    $p->setMaterno($_POST['materno']);
+    $p->setActivo($_POST['activo']);
+    $p->setEsvendedor($_POST['vendedor']);
+    $p->setIdsucursal($_POST['sucursal']);
+    $p->save();
+
+    header('Content-type: application/json');
+    echo json_encode($p);
+    die();
+}
+else if($method === 'DELETE') {
+    $p = UsuarioQuery::create()->findOneByIdusuario($_GET['index']);
+    $p->delete();
+
+    header('Content-type: application/json');
+    echo json_encode($p);
+    die();
+}
 ?>
 <!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <?php include_once("../templates/imports.php"); ?>
+    <script src="../static/js/usuario.js"></script>
     <title>Índice</title>
 </head>
 <body>
@@ -39,20 +78,20 @@ use models\models\UsuarioQuery;
                 <div class="form-group col-12 col-lg-6">
                     <label for="pckActivo">Activo:</label>
                     <select name="activo" id="pckActivo" class="form-control">
-                        <option value="">Si</option>
-                        <option value="">No</option>
+                        <option value="1">Si</option>
+                        <option value="0">No</option>
                     </select>
                 </div>
                 <div class="form-group col-12 col-lg-6">
-                    <label for="pckEsVendedor">EsVendedor:</label>
-                    <select name="esVendedor" id="pckEsVendedor" class="form-control">
-                        <option value="">Si</option>
-                        <option value="">No</option>
+                    <label for="pckEsVendedor">Es Vendedor:</label>
+                    <select name="vendedor" id="pckEsVendedor" class="form-control">
+                        <option value="1">Si</option>
+                        <option value="0">No</option>
                     </select>
                 </div>
                 <div class="form-group col-12 col-lg-6">
-                    <label for="pckIdSucursal">IdSucursal:</label>
-                    <select name="IdSucursal" id="pckIdSucursal" class="form-control">
+                    <label for="pckSucursal">Sucursal:</label>
+                    <select name="sucursal" id="pckSucursal" class="form-control">
                         <?php
                         $tipos = SucursalQuery::create()->find();
 
@@ -67,7 +106,7 @@ use models\models\UsuarioQuery;
                 </div>
                 <div class="text-right col-12">
                     <button class="btn btn-outline-danger col-12 col-lg-4 btn-sm mb-3 mb-lg-0">Limpiar campos</button>
-                    <input type="submit" class="btn btn-primary col-12 col-lg-4" value="Agregar">
+                    <input type="button" onclick="agregarUsuario()" class="btn btn-primary col-12 col-lg-4" value="Agregar">
                 </div>
             </div>
             </form>
@@ -76,6 +115,7 @@ use models\models\UsuarioQuery;
                 $usuarios = UsuarioQuery::create()->find();
 
                 foreach ($usuarios as $usuario) {
+                    $index = $usuario->getIdusuario();
                     $nombre = $usuario->getNombre();
                     $rut = $usuario->getRut();
                     $dv = $usuario->getDigito();
@@ -97,7 +137,7 @@ use models\models\UsuarioQuery;
                         <span class=\"text-secondary\">Sucursal: $sucursal</span>
                     </div>
                     <div class=\"col-12 text-right\">
-                        <button class=\"btn btn-danger col-12 col-lg-4 btn-sm mb-3 mb-lg-0\">Eliminar</button>
+                        <button class=\"btn btn-danger col-12 col-lg-4 btn-sm mb-3 mb-lg-0\" onclick=\"eliminarUsuario($index)\">Eliminar</button>
                     </div>
                 </div>";
                 }
