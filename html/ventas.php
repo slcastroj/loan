@@ -54,14 +54,16 @@ if(!$esVendedor) {
                 <input type="text" id="txtCantidad" class="form-control">
 
                 <div class="mt-4 text-right d-none d-lg-block">
-                    <button class="btn btn-outline-danger btn-sm col-3  ">Limpiar</button>
+                    <button class="btn btn-outline-danger btn-sm col-3">Limpiar</button>
                     <button class="btn btn-primary col-4">Vender</button>
                 </div>
             </div>
             <div class="col-12 col-lg-1 d-flex text-center align-items-center justify-content-center my-3 my-lg-0">
                 <div class="d-none d-lg-block">
-                    <button class="btn btn-outline-primary mb-lg-2">></button>
-                    <button class="btn btn-outline-danger mt-lg-2"><</button>
+                    <div class="row">
+                        <button class="col-12 btn btn-outline-primary mb-lg-3">></button>
+                        <button class="col-12 btn btn-outline-danger"><</button>
+                    </div>
                 </div>
                 <div class="d-lg-none">
                     <button class="btn btn-outline-primary mr-2">v</button>
