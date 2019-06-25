@@ -1,12 +1,42 @@
 <?php
 use models\models\UsuarioQuery;
 use models\models\ProductoQuery;
+use models\models\Producto;
+use models\models\Boleta;
+use models\models\Detalle;
 
 include_once("../vendor/autoload.php");
 include_once("../generated-conf/config.php");
 include_once("../php/utils.php");
 
 validarUsuario(true);
+
+$method = $_SERVER['REQUEST_METHOD'];
+if($method === 'POST') {
+    $data = unserialize($_COOKIE['venta']);
+    
+    $boleta = new Boleta();
+    $boleta->setFecha($data['fecha']);
+    $boleta->setIdsucursal($data['sucursal']);
+    $boleta->setIdusuario($data['vendedor']);
+    $boleta->setTotal($data['total']);
+    $boleta->save();
+
+    foreach ($data['productos'] as $key => $prod) {
+        $cantidad = $prod['cantidad'];
+        $subtotal = $prod['subtotal'];
+        $producto = $prod['producto'];
+        $precio = $prod['precio'];
+
+        $detalle = new Detalle();
+        $detalle->setCantidad($cantidad);
+        $detalle->setIdboleta($boleta->getIdboleta());
+        $detalle->setIdproducto($producto);
+        $detalle->setSubtotal($subtotal);
+        $detalle->setPrecio($precio);
+        $detalle->save();
+    }
+}
 ?>
 <!DOCTYPE html>
 <head>

@@ -13,13 +13,22 @@ function eliminarProducto() {
 }
 
 function vender() {
-    var data = [];
+    var data = {};
 
     $('#pckProductoAgregado option').each(function() {
-        data.push({
-            id: $(this).val(),
-            cantidad: $(this).data('cantidad')
-        });
+        var key = $(this).val();
+        var cantidad = $(this).data('cantidad');
+        var nombre = $(this).data('nombre');
+
+        if(key in data) {
+            data[key].cantidad = data[key].cantidad + cantidad;
+        }
+        else { 
+            data[key] = {
+                'nombre': nombre,
+                'cantidad': cantidad
+            }; 
+        }
     });
 
     $.redirect('detalle_venta.php', data, 'POST');
