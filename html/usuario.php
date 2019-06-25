@@ -13,6 +13,7 @@ $method = $_SERVER['REQUEST_METHOD'];
 if($method === 'POST') {
     $p = new Usuario();
     $p->setRut($_POST['rut']);
+    $p->setClave($_POST['clave']);
     $p->setDigito($_POST['dv']);
     $p->setNombre($_POST['nombre']);
     $p->setPaterno($_POST['paterno']);
@@ -53,6 +54,10 @@ else if($method === 'DELETE') {
                 <div class="form-group col-12 col-lg-6">
                     <label for="txtRut">Rut:</label>
                     <input type="text" name="rut" id="txtRut" class="form-control">
+                </div>
+                <div class="form-group col-12 col-lg-6">
+                    <label for="txtClave">Clave:</label>
+                    <input type="password" name="clave" id="txtClave" class="form-control">
                 </div>
                 <div class="form-group col-12 col-lg-6">
                     <label for="txtNombre">Nombre:</label>

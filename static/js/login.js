@@ -1,6 +1,6 @@
 function login() {
     var data = {
-        'rut': $('#txtRut').val(),
+        'rut': rut.substr(0, rut.length - 2).replace(/\./g, ""),
         'contrasenya': $('#txtContrasena').val()
     }
 
