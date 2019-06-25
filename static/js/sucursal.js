@@ -1,3 +1,16 @@
+$(function()
+{
+    $('#btnGrabar').click(function()
+    {
+        if(!$('#txtNombre').val())
+        {
+            alert('Falta Nombre');
+            $('#txtNombre').focus();
+            return false;
+        }
+    })
+})
+
 function agregarSucursal() {
     var data = {
         nombre: $("#txtNombre").val(),

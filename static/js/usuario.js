@@ -8,19 +8,19 @@ $(function()
             $('#txtRut').focus();
             return false;
         }
-        if($('#txtNombre').val())
+        if(!$('#txtNombre').val())
         {
             alert('Falta Nombre');
             $('#txtNombre').focus();
             return false;
         }
-        if($('#txtPaterno').val())
+        if(!$('#txtPaterno').val())
         {
             alert('Falta Nombre Paterno');
             $('#txtPaterno').focus();
             return false;
         }
-        if($('#txtMaterno').val())
+        if(!$('#txtMaterno').val())
         {
             alert('Falta Nombre Materno');
             $('#txtMaterno').focus();
