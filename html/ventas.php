@@ -38,7 +38,7 @@ validarUsuario(true);
 
                 <div class="mt-4 text-right d-none d-lg-block">
                     <button class="btn btn-outline-danger btn-sm col-4">Limpiar</button>
-                    <button class="btn btn-primary col-5">Vender</button>
+                    <button onclick="vender()" class="btn btn-primary col-5">Vender</button>
                 </div>
             </div>
             <div class="col-12 col-lg-1 d-flex text-center align-items-center justify-content-center my-3 my-lg-0">
@@ -59,7 +59,7 @@ validarUsuario(true);
                 </select>
                 <div class="mt-4 text-right d-lg-none">
                     <button class="btn btn-outline-danger btn-sm col-12 mb-3">Limpiar</button>
-                    <button class="btn btn-primary col-12">Vender</button>
+                    <button onclick="vender()" class="btn btn-primary col-12">Vender</button>
                 </div>
             </div>
         </div>
