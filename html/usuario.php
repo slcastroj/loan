@@ -97,7 +97,7 @@ else if($method === 'DELETE') {
                 </div>
                 <div class="text-right col-12">
                     <button class="btn btn-outline-danger col-12 col-lg-4 btn-sm mb-3 mb-lg-0">Limpiar campos</button>
-                    <input type="button" onclick="agregarUsuario()" class="btn btn-primary col-12 col-lg-4" value="Agregar">
+                    <input type="button" onclick="agregarUsuario()" class="btn btn-primary col-12 col-lg-4" value="Agregar" id="btnGrabar">
                 </div>
             </div>
             </form>
