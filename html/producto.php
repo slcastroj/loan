@@ -13,6 +13,7 @@ include_once("../php/utils.php");
 validarUsuario(false);
 
 $method = $_SERVER['REQUEST_METHOD'];
+$success = true;
 if($method === 'POST') {
     $nombre = $_POST['nombre'];
     $producto = ProductoQuery::create()->findOneByNombreproducto($nombre);
