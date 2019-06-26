@@ -45,6 +45,7 @@ if($method === 'POST') {
     <?php include_once("../templates/imports.php"); ?>
     <title>Índice</title>
     <script src="../static/js/ventas.js"></script>
+    <script src="../static/js/no-login.js"></script>
 </head>
 <body>
     <main class="container-fluid">

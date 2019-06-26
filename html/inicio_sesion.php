@@ -11,7 +11,8 @@ $success = true;
 
 $method = $_SERVER['REQUEST_METHOD'];
 if($method === 'POST') {
-    $usuario = UsuarioQuery::create()->findOneByRut($_POST['rut']);
+    $rut = $_POST['rut'];
+    $usuario = UsuarioQuery::create()->findOneByRut($rut);
     if(is_null($usuario)) {
         $success = false;
     }
@@ -52,7 +53,7 @@ if($method === 'POST') {
                 </div>
                 <div class="form-group text-right">
                     <small><a href="" class="text-danger">¿Olvidaste tu contraseña?</a></small>
-                    <button onclick="login()" class="btn btn-primary ml-3 mt-2">Iniciar sesión</button>
+                    <button type="button" onclick="login()" class="btn btn-primary ml-3 mt-2">Iniciar sesión</button>
                 </div>
             </form>
         </div>

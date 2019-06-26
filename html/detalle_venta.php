@@ -21,6 +21,7 @@ if($method === 'GET') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <?php include_once("../templates/imports.php"); ?>
     <script src="../static/js/detalle_venta.js"></script>
+    <script src="../static/js/no-login.js"></script>
     <title>Índice</title>
 </head>
 <body>

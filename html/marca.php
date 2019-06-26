@@ -35,6 +35,7 @@ else if($method === 'DELETE') {
     <?php include_once("../templates/imports.php"); ?>
     <title>Índice</title>
     <script src="../static/js/marca.js"></script>
+    <script src="../static/js/no-login.js"></script>
 </head>
 <body>
     <main class="container-fluid">
