@@ -56,5 +56,5 @@ function eliminarUsuario(index) {
         success: function (rs) {
             location.reload(true);
         }
-      });
+    });
 }

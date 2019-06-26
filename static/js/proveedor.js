@@ -16,15 +16,7 @@ function agregarProveedor() {
         nombre: $("#txtNombre").val(),
         activo: $("#pckActivo").val()
     };
-    $.ajax({
-        type: 'POST',
-        url: 'proveedor.php',
-        data: data,
-        contentType: 'application/x-www-form-urlencoded',
-        success: function (rs) {
-            location.reload(true);
-        }
-      });
+    $.redirect('proveedor.php', data, 'POST');
 }
 
 function eliminarProveedor(index) {
@@ -34,5 +26,5 @@ function eliminarProveedor(index) {
         success: function (rs) {
             location.reload(true);
         }
-      });
+    });
 }
