@@ -37,7 +37,7 @@ function agregarUsuario() {
     var data = {
         rut: rut,
         clave: $("#txtClave").val(),
-        dv: rut.substr(rut.length - 1, 1),
+        dv: rut.substr(rut.length, 1),
         nombre: $("#txtNombre").val(),
         paterno: $("#txtPaterno").val(),
         materno: $("#txtMaterno").val(),
