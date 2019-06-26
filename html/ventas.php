@@ -83,6 +83,11 @@ if($method === 'POST') {
                     <button onclick="agregarProducto()" class="btn btn-outline-primary mr-2">v</button>
                     <button onclick="eliminarProducto()" class="btn btn-outline-danger ml-2">^</button>
                 </div>
+                <?php 
+                    if(!$success) {
+                        echo "<div class=\"mt-3 p-3 col-12\"><div class=\"alert alert-danger mb-3\" role=\"alert\">Marca ya existente</div></div>"; 
+                    }
+                ?>
             </div>
             <div class="col-12 col-lg-3">
                 <input type="search" id="txtBusquedaAgregado" class="form-control">

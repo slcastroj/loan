@@ -9,7 +9,13 @@ use models\models\Sucursal;
 validarUsuario(false);
 
 $method = $_SERVER['REQUEST_METHOD'];
+$success = true;
 if($method === 'POST') {
+    $nombre = $_POST['nombre'];
+    $producto = SucursalQuery::create()->findOneByNombre($nombre);
+    if(!is_null($producto)) {
+        $success = false;
+    }
     $p = new Sucursal();
     $p->setNombre($_POST['nombre']);
     $p->setActivo($_POST['activo']);
@@ -59,6 +65,11 @@ else if($method === 'DELETE') {
                     <button class="btn btn-outline-danger col-12 col-lg-4 btn-sm mb-3 mb-lg-0">Limpiar campos</button>
                     <input onclick="agregarSucursal()" type="button" class="btn btn-primary col-12 col-lg-4" value="Agregar" id="btnGrabar">
                 </div>
+                <?php 
+                    if(!$success) {
+                        echo "<div class=\"mt-3 p-3 col-12\"><div class=\"alert alert-danger mb-3\" role=\"alert\">Sucursal ya existente</div></div>"; 
+                    }
+                ?>
             </div>
             </form>
             <div class="col-12 col-lg-6 p-5" style="height:500px; overflow-y:scroll">

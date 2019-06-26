@@ -20,6 +20,7 @@ function agregarMarca() {
 }
 
 function eliminarMarca(index) {
+    $.redirect('marca.php?'+"index="+index, null, 'POST');
     $.ajax({
         type: 'DELETE',
         url: 'marca.php?'+"index="+index,
