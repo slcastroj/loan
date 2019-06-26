@@ -11,9 +11,17 @@ $success = true;
 
 $method = $_SERVER['REQUEST_METHOD'];
 if($method === 'POST') {
+    if(!isset($_POST['rut'])){
+        $success = false;
+    }else{
+
+    
     $rut = $_POST['rut'];
     $usuario = UsuarioQuery::create()->findOneByRut($rut);
     if(is_null($usuario)) {
+        $success = false;
+    }
+    if(!isset($_POST['contrasenya'])){
         $success = false;
     }
     else if($usuario->getClave() === $_POST['contrasenya']) {
@@ -21,7 +29,7 @@ if($method === 'POST') {
         header('Location: ventas.php', TRUE, 302);
         $success = true;
     }
-
+    }
     $success = false;
 }
 ?>
