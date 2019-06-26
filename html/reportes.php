@@ -27,7 +27,7 @@ validarUsuario(false);
                 <?php
                 $usuarios = UsuarioQuery::create()->find();
                 echo "
-                <h4>Usuarios</h4>
+                <h4 class=\"mt-5\">Usuarios</h4>
                 <div class=\"border rounded p-3\" style=\"overflow-x:scroll;min-height:300px;max-height:400px;\">
                 <table class=\"col-12\">
                     <thead>
