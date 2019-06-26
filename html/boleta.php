@@ -53,9 +53,6 @@ if($method === 'DELETE') {
                     <div class=\"col-12 col-lg-6\">
                         <span class=\"text-secondary\">Total: $$total</span>
                     </div>
-                    <div class=\"col-12 text-right\">
-                        <button class=\"btn btn-danger col-12 col-lg-4 btn-sm mb-3 mb-lg-0\" onclick=\"eliminarBoleta($index)\">Eliminar</button>
-                    </div>
                 </div>";
                 }
                 ?>

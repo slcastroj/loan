@@ -5,6 +5,8 @@ use models\models\SucursalQuery;
 use models\models\Base\MarcaQuery;
 use models\models\ProveedorQuery;
 use models\models\Base\TipoproductoQuery;
+use models\models\Base\BoletaQuery;
+use models\models\Base\DetalleQuery;
 
 include_once("../vendor/autoload.php");
 include_once("../generated-conf/config.php");
@@ -253,6 +255,84 @@ validarUsuario(false);
                         <td>$stockMinimo</td>
                         <td>$precio</td>
                         <td>$activo</td>
+                    </tr>
+                    ";
+                }
+                echo "</tbody></table></div>";
+                ?>
+                <?php
+                $boletas = BoletaQuery::create()->find();
+                echo "
+                <h4 class=\"mt-5\">Boletas</h4>
+                <div class=\"border rounded p-3\" style=\"overflow-x:scroll;min-height:300px;max-height:400px;\">
+                <table class=\"col-12\">
+                    <thead>
+                        <th scope=\"col\">#</th>
+                        <th>Id</th>
+                        <th>Fecha</th>
+                        <th>Sucursal</th>
+                        <th>Vendedor</th>
+                        <th>Total</th>
+                    </thead>
+                    <tbody>
+                ";
+
+                foreach ($boletas as $key => $boleta) {
+                    $id = $boleta->getIdboleta();
+                    $fecha = $boleta->getFecha()->format('Y-m-m');
+                    $sucursal = $boleta->getSucursal()->getNombre();
+                    $vendedor = $boleta->getUsuario();
+                    $vendedor = $vendedor->getNombre().' '.$vendedor->getPaterno();
+                    $total = $boleta->getTotal();
+
+                    echo "
+                    <tr>
+                        <th scope=\"row\">$key</th>
+                        <td>$id</td>
+                        <td>$fecha</td>
+                        <td>$sucursal</td>
+                        <td>$vendedor</td>
+                        <td>$total</td>
+                    </tr>
+                    ";
+                }
+                echo "</tbody></table></div>";
+                ?>
+                <?php
+                $detalles = DetalleQuery::create()->find();
+                echo "
+                <h4 class=\"mt-5\">Detalles boletas</h4>
+                <div class=\"border rounded p-3\" style=\"overflow-x:scroll;min-height:300px;max-height:400px;\">
+                <table class=\"col-12\">
+                    <thead>
+                        <th scope=\"col\">#</th>
+                        <th>Id</th>
+                        <th>Boleta</th>
+                        <th>Producto</th>
+                        <th>Cantidad</th>
+                        <th>Precio</th>
+                        <th>Subtotal</th>
+                    </thead>
+                    <tbody>
+                ";
+
+                foreach ($detalles as $key => $detalle) {
+                    $id = $detalle->getIddetalle();
+                    $boleta = $detalle->getIdboleta();
+                    $producto = $detalle->getProducto()->getNombreproducto();
+                    $cantidad = $detalle->getCantidad();
+                    $precio = $detalle->getPrecio();
+                    $subtotal = $detalle->getSubtotal();
+
+                    echo "
+                    <tr>
+                        <th scope=\"row\">$key</th>
+                        <td>$id</td>
+                        <td>$boleta</td>
+                        <td>$producto</td>
+                        <td>$cantidad</td>
+                        <td>$precio</td>
+                        <td>$subtotal</td>
                     </tr>
                     ";
                 }

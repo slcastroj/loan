@@ -53,7 +53,6 @@ if($method === 'POST') {
         <div class="row m-2 m-lg-5">
             <?php include_once('../templates/cerrar_sesion.php'); ?>
             <div class="col-12 col-lg-3">
-                <input type="search" id="txtBusquedaAgregar" class="form-control">
                 <select id="pckProductoAgregar" class="form-control mt-3" size="15">
                     <?php
                     $productos = ProductoQuery::create()->find();
@@ -69,7 +68,6 @@ if($method === 'POST') {
                 <input type="text" id="txtCantidad" class="form-control">
 
                 <div class="mt-4 text-right d-none d-lg-block">
-                    <button class="btn btn-outline-danger btn-sm col-4">Limpiar</button>
                     <button onclick="vender()" class="btn btn-primary col-5">Vender</button>
                 </div>
             </div>
@@ -91,11 +89,9 @@ if($method === 'POST') {
                 ?>
             </div>
             <div class="col-12 col-lg-3">
-                <input type="search" id="txtBusquedaAgregado" class="form-control">
                 <select id="pckProductoAgregado" class="form-control mt-3" size="15">
                 </select>
                 <div class="mt-4 text-right d-lg-none">
-                    <button class="btn btn-outline-danger btn-sm col-12 mb-3">Limpiar</button>
                     <button onclick="vender()" class="btn btn-primary col-12">Vender</button>
                 </div>
             </div>

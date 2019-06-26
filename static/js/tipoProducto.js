@@ -1,7 +1,7 @@
 
 
 function agregarTipoProducto() {
-    if(!$('#txtNombre').val())
+    if(!$.trim($('#txtNombre').val()))
         {
             alert('Falta Nombre');
             $('#txtNombre').focus();
