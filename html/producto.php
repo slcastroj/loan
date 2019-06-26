@@ -128,7 +128,7 @@ else if($method === 'DELETE') {
                     <textarea name="descripcion" id="txtDescripcion" class="form-control" rows="6" style="resize:none"></textarea>
                 </div>
                 <div class="text-right col-12">
-                    <button class="btn btn-outline-danger col-12 col-lg-4 btn-sm mb-3 mb-lg-0">Limpiar campos</button>
+                    
                     <button type="button" class="btn btn-primary col-12 col-lg-4" onclick="agregarProducto()" id="btnGrabar">Agregar</button>
                 </div>
                 <?php 
