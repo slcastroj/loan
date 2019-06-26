@@ -14,17 +14,24 @@ validarUsuario(false);
 
 $method = $_SERVER['REQUEST_METHOD'];
 if($method === 'POST') {
-    $p = new Producto();
-    $p->setNombreproducto($_POST['nombre']);
-    $p->setPrecio($_POST['precio']);
-    $p->setIdtipoproducto($_POST['tipo']);
-    $p->setIdmarca($_POST['marca']);
-    $p->setIdproveedor($_POST['proveedor']);
-    $p->setActivo($_POST['activo']);
-    $p->setStock($_POST['stock']);
-    $p->setStockminimo($_POST['stockMinimo']);
-    $p->setDescripcion($_POST['descripcion']);
-    $p->save();
+    $nombre = $_POST['nombre'];
+    $producto = ProductoQuery::create()->findOneByNombreproducto($nombre);
+    if(!is_null($producto)) {
+        $success = false;
+    }
+    else {
+        $p = new Producto();
+        $p->setNombreproducto($_POST['nombre']);
+        $p->setPrecio($_POST['precio']);
+        $p->setIdtipoproducto($_POST['tipo']);
+        $p->setIdmarca($_POST['marca']);
+        $p->setIdproveedor($_POST['proveedor']);
+        $p->setActivo($_POST['activo']);
+        $p->setStock($_POST['stock']);
+        $p->setStockminimo($_POST['stockMinimo']);
+        $p->setDescripcion($_POST['descripcion']);
+        $p->save();
+    }
 
     header('Content-type: application/json');
     echo json_encode($p);
@@ -131,6 +138,11 @@ else if($method === 'DELETE') {
                     <button class="btn btn-outline-danger col-12 col-lg-4 btn-sm mb-3 mb-lg-0">Limpiar campos</button>
                     <button type="button" class="btn btn-primary col-12 col-lg-4" onclick="agregarProducto()" id="btnGrabar">Agregar</button>
                 </div>
+                <?php 
+                    if(!$success) {
+                        echo "<div class=\"mt-3 p-3 col-12\"><div class=\"alert alert-danger mb-3\" role=\"alert\">Producto ya existente</div></div>"; 
+                    }
+                ?>
             </div>
             </form>
             <div class="col-12 col-lg-6 p-5" style="height:500px; overflow-y:scroll">
