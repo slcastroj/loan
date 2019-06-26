@@ -1,5 +1,5 @@
 $(() => {
-    if($.cookie("sesion") === undefined) {
+    if(Cookies.get("sesion") === undefined) {
         return;
     }
     document.location.replace("ventas.php");
