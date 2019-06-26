@@ -32,18 +32,10 @@ if($method === 'POST') {
         $p->setDescripcion($_POST['descripcion']);
         $p->save();
     }
-
-    header('Content-type: application/json');
-    echo json_encode($p);
-    die();
 }
 else if($method === 'DELETE') {
     $p = ProductoQuery::create()->findOneByIdproducto($_GET['index']);
     $p->delete();
-
-    header('Content-type: application/json');
-    echo json_encode($p);
-    die();
 }
 ?>
 <!DOCTYPE html>
