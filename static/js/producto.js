@@ -46,8 +46,7 @@ function agregarProducto() {
         proveedor: $("#pckProveedor").val(),
         activo: $("#pckActivo").val(),
         stock: $("#txtStock").val(),
-        stockMinimo: $("#txtStockMinimo").val(),
-        descripcion: $("#txtDescripcion").val()
+        stockMinimo: $("#txtStockMinimo").val()
     };
     $.redirect('producto.php', data, 'POST');
 }

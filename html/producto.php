@@ -16,7 +16,12 @@ $method = $_SERVER['REQUEST_METHOD'];
 $success = true;
 if($method === 'POST') {
     $nombre = $_POST['nombre'];
+    $codigo = $_POST['codigo'];
     $producto = ProductoQuery::create()->findOneByNombreproducto($nombre);
+    if(!is_null($producto)) {
+        $success = false;
+    }
+    $producto = ProductoQuery::create()->findOneByCodigo($codigo);
     if(!is_null($producto)) {
         $success = false;
     }
@@ -31,7 +36,6 @@ if($method === 'POST') {
         $p->setStock($_POST['stock']);
         $p->setStockminimo($_POST['stockMinimo']);
         $p->setCodigo($_POST['codigo']);
-        if(isset($_POST['descripcion'])) { $p->setDescripcion($_POST['descripcion']); }
         $p->save();
     }
 }
@@ -128,10 +132,6 @@ else if($method === 'DELETE') {
                     <label for="txtStockMinimo">Stock Mínimo:</label>
                     <input type="text" name="stockMinimo" id="txtStockMinimo" class="form-control">
                 </div>
-                <div class="form-group col-12">
-                    <label for="txtDescripcion">Descripcion:</label>
-                    <textarea name="descripcion" id="txtDescripcion" class="form-control" rows="6" style="resize:none"></textarea>
-                </div>
                 <div class="text-right col-12">
                     
                     <button type="button" class="btn btn-primary col-12 col-lg-4" onclick="agregarProducto()" id="btnGrabar">Agregar</button>
@@ -150,6 +150,7 @@ else if($method === 'DELETE') {
                 foreach ($productos as $producto) {
                     $index = $producto->getIdproducto();
                     $nombre = $producto->getNombreproducto();
+                    $codigo = $producto->getCodigo();
                     $precio = $producto->getPrecio();
                     $stock = $producto->getStock();
                     $stockmin = $producto->getStockminimo();
@@ -161,7 +162,7 @@ else if($method === 'DELETE') {
                     echo "<div class=\"row border rounded p-2 mb-3\">
                     <span class=\"text-primary col-12\">$nombre</span>
                     <div class=\"col-12 col-lg-6\">
-                        <span class=\"text-secondary\">Precio: $precio</span>
+                        <span class=\"text-secondary\">Precio: $$precio</span>
                         <br>
                         <span class=\"text-secondary\">Stock: $stock</span>
                         <br>
@@ -170,6 +171,8 @@ else if($method === 'DELETE') {
                         <span class=\"text-secondary\">Activo: $activo</span>
                     </div>
                     <div class=\"col-12 col-lg-6 mb-3 mb-lg-0\">
+                        <span class=\"text-secondary\">Código: $codigo</span>
+                        <br>
                         <span class=\"text-secondary\">Proveedor: $proveedor</span>
                         <br>
                         <span class=\"text-secondary\">Marca: $marca</span>
