@@ -54,7 +54,7 @@ function eliminarUsuario(index) {
         type: 'DELETE',
         url: 'usuario.php?'+"index="+index,
         success: function (rs) {
-            location.reload(true);
+            location.replace('usuario.php');
         }
     });
 }

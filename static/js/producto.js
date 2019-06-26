@@ -63,7 +63,7 @@ function eliminarProducto(index) {
         type: 'DELETE',
         url: 'producto.php?'+"index="+index,
         success: function (rs) {
-            location.reload(true);
+            location.replace('producto.php');
         }
     });
 }

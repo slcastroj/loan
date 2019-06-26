@@ -24,7 +24,7 @@ function eliminarSucursal(index) {
         type: 'DELETE',
         url: 'sucursal.php?'+"index="+index,
         success: function (rs) {
-            location.reload(true);
+            location.replace('sucursal.php');
         }
     });
 }

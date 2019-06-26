@@ -24,7 +24,7 @@ function eliminarTipoProducto(index) {
         type: 'DELETE',
         url: 'tipoProducto.php?'+"index="+index,
         success: function (rs) {
-            location.reload(true);
+            location.replace('tipoProducto.php');
         }
     });
 }

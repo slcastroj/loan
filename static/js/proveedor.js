@@ -24,7 +24,7 @@ function eliminarProveedor(index) {
         type: 'DELETE',
         url: 'proveedor.php?'+"index="+index,
         success: function (rs) {
-            location.reload(true);
+            location.replace('proveedor.php');
         }
     });
 }

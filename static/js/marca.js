@@ -1,17 +1,11 @@
-$(function()
-{
-    $('#btnGrabar').click(function()
-    {
-        if(!$('#txtNombre').val())
-        {
-            alert('Falta Nombre');
-            $('#txtNombre').focus();
-            return false;
-        }
-    })
-})
-
 function agregarMarca() {
+    if(!$('#txtNombre').val())
+    {
+        alert('Falta Nombre');
+        $('#txtNombre').focus();
+        return;
+    }
+
     var data = {
         nombre: $("#txtNombre").val(),
         activo: $("#pckActivo").val()
@@ -20,12 +14,11 @@ function agregarMarca() {
 }
 
 function eliminarMarca(index) {
-    $.redirect('marca.php?'+"index="+index, null, 'POST');
     $.ajax({
         type: 'DELETE',
         url: 'marca.php?'+"index="+index,
         success: function (rs) {
-            location.reload(true);
+            location.replace('marca.php');
         }
-      });
+    });
 }

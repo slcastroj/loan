@@ -45,7 +45,7 @@ if($method === 'POST') {
 <body>
     <main class="container-fluid">
         <div class="row mt-5 m-lg-5">
-            <form action="inicio_sesion.php" method="POST" class="col-12 col-lg-4 mx-auto">
+            <form action="inicio_sesion.php" method="POST" class="col-12 col-lg-4 mx-auto" onload="l()">
                 <?php 
                     if(!$success) {
                         echo "<div class=\"alert alert-danger mb-3\" role=\"alert\">Credenciales incorrectas</div>"; 

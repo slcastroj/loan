@@ -26,8 +26,6 @@ if($method === 'POST') {
 else if($method === 'DELETE') {
     $p = MarcaQuery::create()->findOneByIdmarca($_GET['index']);
     $p->delete();
-
-    
 }
 ?>
 <!DOCTYPE html>
