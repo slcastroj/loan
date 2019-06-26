@@ -21,6 +21,7 @@ if($method === 'POST') {
     if(is_null($usuario)) {
         $success = false;
     }
+    else {
     if(!isset($_POST['contrasenya'])){
         $success = false;
     }
@@ -28,6 +29,7 @@ if($method === 'POST') {
         setcookie('sesion', $usuario->getRut());
         header('Location: ventas.php', TRUE, 302);
         $success = true;
+    }
     }
     }
     $success = false;
