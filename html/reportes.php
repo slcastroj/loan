@@ -220,7 +220,6 @@ validarUsuario(false);
                         <th>Id Producto</th>
                         <th>Nombre Producto</th>
                         <th>Codigo</th>
-                        <th>Descripcion</th>
                         <th>Stock</th>
                         <th>Stock Minimo</th>
                         <th>Precio</th>
