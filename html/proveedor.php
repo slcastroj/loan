@@ -9,23 +9,23 @@ include_once("../php/utils.php");
 validarUsuario(false);
 
 $method = $_SERVER['REQUEST_METHOD'];
+$success = true;
 if($method === 'POST') {
-    $p = new Proveedor();
-    $p->setNombre($_POST['nombre']);
-    $p->setActivo($_POST['activo']);
-    $p->save();
-
-    header('Content-type: application/json');
-    echo json_encode($p);
-    die();
+    $nombre = $_POST['nombre'];
+    $producto = ProveedorQuery::create()->findOneByNombre($nombre);
+    if(!is_null($producto)) {
+        $success = false;
+    }
+    else {
+        $p = new Proveedor();
+        $p->setNombre($_POST['nombre']);
+        $p->setActivo($_POST['activo']);
+        $p->save();
+    }
 }
 else if($method === 'DELETE') {
     $p = ProveedorQuery::create()->findOneByIdproveedor($_GET['index']);
     $p->delete();
-
-    header('Content-type: application/json');
-    echo json_encode($p);
-    die();
 }
 ?>
 <!DOCTYPE html>
@@ -59,6 +59,11 @@ else if($method === 'DELETE') {
                     <button class="btn btn-outline-danger col-12 col-lg-4 btn-sm mb-3 mb-lg-0">Limpiar campos</button>
                     <input onclick="agregarProveedor()" type="button" class="btn btn-primary col-12 col-lg-4" value="Agregar" id="btnGrabar">
                 </div>
+                <?php 
+                    if(!$success) {
+                        echo "<div class=\"mt-3 p-3 col-12\"><div class=\"alert alert-danger mb-3\" role=\"alert\">Marca ya existente</div></div>"; 
+                    }
+                ?>
             </div>
             </form>
             <div class="col-12 col-lg-6 p-5" style="height:500px; overflow-y:scroll">

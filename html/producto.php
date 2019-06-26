@@ -30,7 +30,8 @@ if($method === 'POST') {
         $p->setActivo($_POST['activo']);
         $p->setStock($_POST['stock']);
         $p->setStockminimo($_POST['stockMinimo']);
-        $p->setDescripcion($_POST['descripcion']);
+        $p->setCodigo($_POST['codigo']);
+        if(isset($_POST['descripcion'])) { $p->setDescripcion($_POST['descripcion']); }
         $p->save();
     }
 }
@@ -58,6 +59,10 @@ else if($method === 'DELETE') {
                 <div class="form-group col-12 col-lg-6">
                     <label for="txtNombre">Nombre:</label>
                     <input type="text" name="nombre" id="txtNombre" class="form-control">
+                </div>
+                <div class="form-group col-12 col-lg-6">
+                    <label for="txtCodigo">Código:</label>
+                    <input type="text" name="codigo" id="txtCodigo" class="form-control">
                 </div>
                 <div class="form-group col-12 col-lg-6">
                     <label for="txtPrecio">Precio:</label>

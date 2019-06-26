@@ -1,8 +1,6 @@
-$(function()
-{
-    $('#btnGrabar').click(function()
-    {
-        if(!$.trim($('#txtNombre').val()))
+
+function agregarProducto() {
+    if(!$.trim($('#txtNombre').val()))
         {
             alert('Falta Nombre');
             $('#txtNombre').focus();
@@ -38,14 +36,10 @@ $(function()
             $('#txtStockMinimo').focus();
             return false;
         }
-        
-    })
-})
 
-
-function agregarProducto() {
     var data = {
         nombre: $("#txtNombre").val(),
+        codigo: $("#txtCodigo").val(),
         precio: $("#txtPrecio").val(),
         tipo: $("#pckTipo").val(),
         marca: $("#pckMarca").val(),

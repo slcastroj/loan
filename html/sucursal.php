@@ -16,22 +16,16 @@ if($method === 'POST') {
     if(!is_null($producto)) {
         $success = false;
     }
+    else {
     $p = new Sucursal();
     $p->setNombre($_POST['nombre']);
     $p->setActivo($_POST['activo']);
     $p->save();
-
-    header('Content-type: application/json');
-    echo json_encode($p);
-    die();
+    }
 }
 else if($method === 'DELETE') {
     $p = SucursalQuery::create()->findOneByIdsucursal($_GET['index']);
     $p->delete();
-
-    header('Content-type: application/json');
-    echo json_encode($p);
-    die();
 }
 ?>
 <!DOCTYPE html>

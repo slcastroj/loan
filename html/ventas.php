@@ -12,6 +12,7 @@ include_once("../php/utils.php");
 validarUsuario(true);
 
 $method = $_SERVER['REQUEST_METHOD'];
+$success = true;
 if($method === 'POST') {
     $data = unserialize($_COOKIE['venta']);
     
