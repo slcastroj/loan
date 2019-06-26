@@ -10,30 +10,30 @@ include_once("../php/utils.php");
 validarUsuario(false);
 
 $method = $_SERVER['REQUEST_METHOD'];
+$success = true;
 if($method === 'POST') {
-    $p = new Usuario();
-    $p->setRut($_POST['rut']);
-    $p->setClave($_POST['clave']);
-    $p->setDigito($_POST['dv']);
-    $p->setNombre($_POST['nombre']);
-    $p->setPaterno($_POST['paterno']);
-    $p->setMaterno($_POST['materno']);
-    $p->setActivo($_POST['activo']);
-    $p->setEsvendedor($_POST['vendedor']);
-    $p->setIdsucursal($_POST['sucursal']);
-    $p->save();
-
-    header('Content-type: application/json');
-    echo json_encode($p);
-    die();
+    $rut = $_POST['rut'];
+    $usuario = UsuarioQuery::create()->findOneByRut($_POST['rut']);
+    if(!is_null($usuario)) {
+        $success = false;
+    }
+    else {
+        $p = new Usuario();
+        $p->setRut($_POST['rut']);
+        $p->setClave($_POST['clave']);
+        $p->setDigito($_POST['dv']);
+        $p->setNombre($_POST['nombre']);
+        $p->setPaterno($_POST['paterno']);
+        $p->setMaterno($_POST['materno']);
+        $p->setActivo($_POST['activo']);
+        $p->setEsvendedor($_POST['vendedor']);
+        $p->setIdsucursal($_POST['sucursal']);
+        $p->save();
+    }
 }
 else if($method === 'DELETE') {
     $p = UsuarioQuery::create()->findOneByIdusuario($_GET['index']);
     $p->delete();
-
-    header('Content-type: application/json');
-    echo json_encode($p);
-    die();
 }
 ?>
 <!DOCTYPE html>
@@ -105,6 +105,11 @@ else if($method === 'DELETE') {
                     <button class="btn btn-outline-danger col-12 col-lg-4 btn-sm mb-3 mb-lg-0">Limpiar campos</button>
                     <input type="button" onclick="agregarUsuario()" class="btn btn-primary col-12 col-lg-4" value="Agregar" id="btnGrabar">
                 </div>
+                <?php 
+                    if(!$success) {
+                        echo "<div class=\"mt-3 p-3 col-12\"><div class=\"alert alert-danger mb-3\" role=\"alert\">Usuario ya existente</div></div>"; 
+                    }
+                ?>
             </div>
             </form>
             <div class="col-12 col-lg-6 p-5" style="height:500px; overflow-y:scroll">

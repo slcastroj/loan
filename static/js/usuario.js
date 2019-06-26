@@ -46,15 +46,7 @@ function agregarUsuario() {
         vendedor: $("#pckEsVendedor").val(),
         sucursal: $("#pckSucursal").val()
     };
-    $.ajax({
-        type: 'POST',
-        url: 'usuario.php',
-        data: data,
-        contentType: 'application/x-www-form-urlencoded',
-        success: function (rs) {
-            location.reload(true);
-        }
-      });
+    $.redirect('usuario.php', data, 'POST');
 }
 
 function eliminarUsuario(index) {
