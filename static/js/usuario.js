@@ -33,11 +33,12 @@ $(function()
 function agregarUsuario() {
     var rut = $('#txtRut').val();
     rut = rut.replace(/(\.|\-)/g, "");
+    var dv = rut.slice(-1);
     rut = rut.substr(0, rut.length - 1);
     var data = {
         rut: rut,
         clave: $("#txtClave").val(),
-        dv: rut.substr(rut.length, 1),
+        dv: dv,
         nombre: $("#txtNombre").val(),
         paterno: $("#txtPaterno").val(),
         materno: $("#txtMaterno").val(),
