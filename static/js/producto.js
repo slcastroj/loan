@@ -55,15 +55,7 @@ function agregarProducto() {
         stockMinimo: $("#txtStockMinimo").val(),
         descripcion: $("#txtDescripcion").val()
     };
-    $.ajax({
-        type: 'POST',
-        url: 'producto.php',
-        data: data,
-        contentType: 'application/x-www-form-urlencoded',
-        success: function (rs) {
-            location.reload(true);
-        }
-      });
+    $.redirect('producto.php', data, 'POST');
 }
 
 function eliminarProducto(index) {
