@@ -27,6 +27,7 @@ validarUsuario(false);
                 <a href="proveedor.php" class="btn btn-primary col-12 mb-3">Proveedores</a>
                 <a href="marca.php" class="btn btn-primary col-12 mb-3">Marca</a>
                 <a href="tipoProducto.php" class="btn btn-primary col-12 mb-3">Tipos de producto</a>
+                <a href="reportes.php" class="btn btn-info col-12 mt-5">Generar reportes</a>
             </div>
         </div>
     </main>
