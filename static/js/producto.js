@@ -4,37 +4,37 @@ function agregarProducto() {
         {
             alert('Falta Nombre');
             $('#txtNombre').focus();
-            return false;
+            return;
         }
         if(!$('#txtPrecio').val())
         {
             alert('Falta Precio');
             $('#txtPrecio').focus();
-            return false;
+            return;
         }
         if(!$('#txtStock').val())
         {
             alert('Falta Stock');
             $('#txtStock').focus();
-            return false;
+            return;
         }
         if($('#txtStock').val() < 0)
         {
             alert('stock no puede ser negativo');
             $('#txtStock').focus();
-            return false;
+            return;
         }
         if(!$('#txtStockMinimo').val())
         {
             alert('falta stock');
             $('#txtStockMinimo').focus();
-            return false;
+            return;
         }
         if($('#txtStockMinimo').val() < 0)
         {
             alert('stockMinimo no puede ser negativo');
             $('#txtStockMinimo').focus();
-            return false;
+            return;
         }
 
     var data = {

@@ -1,8 +1,7 @@
-$(function()
-{
-    $('#btnGrabar').click(function()
-    {
-        if(!$.trim($('#txtRut').val()))
+
+
+function agregarUsuario() {
+    if(!$.trim($('#txtRut').val()))
         {
             alert('Falta rut');
             $('#txtRut').focus();
@@ -26,11 +25,7 @@ $(function()
             $('#txtMaterno').focus();
             return false;
         }
-        
-    })
-})
 
-function agregarUsuario() {
     var rut = $('#txtRut').val();
     rut = rut.replace(/(\.|\-)/g, "");
     var dv = rut.slice(-1);

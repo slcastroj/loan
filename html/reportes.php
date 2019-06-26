@@ -236,7 +236,6 @@ validarUsuario(false);
                     $tipo = TipoproductoQuery::create()->findOneByIdtipoproducto($producto->getIdtipoproducto())->getNombre();
                     $nombre = $producto->getNombreproducto();
                     $codigo = $producto->getCodigo();
-                    $descripcion = $producto->getDescripcion();
                     $stock = $producto->getStock();
                     $stockMinimo = $producto->getStockminimo();
                     $precio = $producto->getPrecio();
@@ -246,14 +245,15 @@ validarUsuario(false);
                     <tr>
                         <th scope=\"row\">$key</th>
                         <td>$id</td>
-                        <td>$rut</td>
-                        <td>$dv</td>
+                        <td>$marca</td>
+                        <td>$proveedor</td>
+                        <td>$tipo</td>
                         <td>$nombre</td>
-                        <td>$paterno</td>
-                        <td>$materno</td>
-                        <td>$sucursal</td>
+                        <td>$codigo</td>
+                        <td>$stock</td>
+                        <td>$stockMinimo</td>
+                        <td>$precio</td>
                         <td>$activo</td>
-                        <td>$vendedor</td>
                     </tr>
                     ";
                 }

@@ -1,17 +1,14 @@
-$(function()
-{
-    $('#btnGrabar').click(function()
-    {
-        if(!$('#txtNombre').val())
+
+
+function agregarProveedor() {
+
+    if(!$('#txtNombre').val())
         {
             alert('Falta Nombre');
             $('#txtNombre').focus();
-            return false;
+            return;
         }
-    })
-})
 
-function agregarProveedor() {
     var data = {
         nombre: $("#txtNombre").val(),
         activo: $("#pckActivo").val()
