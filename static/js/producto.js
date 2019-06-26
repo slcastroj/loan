@@ -65,5 +65,5 @@ function eliminarProducto(index) {
         success: function (rs) {
             location.reload(true);
         }
-      });
+    });
 }

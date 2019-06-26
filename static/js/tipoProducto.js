@@ -16,15 +16,7 @@ function agregarTipoProducto() {
         nombre: $("#txtNombre").val(),
         activo: $("#pckActivo").val()
     };
-    $.ajax({
-        type: 'POST',
-        url: 'tipoProducto.php',
-        data: data,
-        contentType: 'application/x-www-form-urlencoded',
-        success: function (rs) {
-            location.reload(true);
-        }
-      });
+    $.redirect('tipoProducto.php', data, 'POST');
 }
 
 function eliminarTipoProducto(index) {
@@ -34,5 +26,5 @@ function eliminarTipoProducto(index) {
         success: function (rs) {
             location.reload(true);
         }
-      });
+    });
 }

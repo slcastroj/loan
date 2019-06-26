@@ -1,3 +1,10 @@
+$(() => {
+    if($.cookie("sesion") === undefined) {
+        return;
+    }
+    document.location.replace("ventas.php");
+});
+
 function login() {
     var rut = $('#txtRut').val();
     rut = rut.replace(/(\.|\-)/g, "");
@@ -9,9 +16,3 @@ function login() {
 
     $.redirect('inicio_sesion.php', data, 'POST');
 }
-
-$(() => {
-    if($.cookie("sesion") !== null) {
-        document.location.replace("ventas.php");
-    }
-});
