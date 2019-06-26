@@ -12,7 +12,7 @@ $method = $_SERVER['REQUEST_METHOD'];
 $success = true;
 if($method === 'POST') {
     $nombre = $_POST['nombre'];
-    $producto = MarcaQuery::create()->findOneByNombremarca($nombre);
+    $producto = MarcaQuery::create()->findOneByNombre($nombre);
     if(!is_null($producto)) {
         $success = false;
     }
